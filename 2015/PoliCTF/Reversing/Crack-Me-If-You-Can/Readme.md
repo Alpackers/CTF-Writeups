@@ -4,14 +4,22 @@
 **Points:** 100
 **Description:**
 
-> TODO
+> John bets nobody can find the passphrase to login! 
+> GPG key: viphHowrirOmbugTudIbavMeuhacyet
 
 ##Write-up
 
->TODO
->
-![Image of Hard Interview hint]
-(./hint.tiff)
+>```bash
+>$ unzip crack-me-if-you-can.apk classes.dex
+> Archive: crack-me-if-you-can.apk
+>  inflating: classes.dex
+>$ ~/dex2jar-0.0.9.15/dex2jar.sh classes.dex
+> this cmd is deprecated, use the d2j-dex2jar if possible
+> dex2jar version: translator-0.0.9.15
+> dex2jar classes.dex -> classes_dex2jar.jar
+> Done.
+>$ java -jar ~/luyten-0.4.3/luyten-0.4.3.jar classes_dex2jar.jar
+>```
 
 >```python
 >def ca(text):
