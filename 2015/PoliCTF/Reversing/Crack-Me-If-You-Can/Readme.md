@@ -11,7 +11,7 @@
 ##Write-up
 > To start, we are given an apk to reverse.  The firt thing I did was attempt to decompile the code.  To do this I used a few different tools.  The first thing we need to do is unzip the apk into a dex file.  After that we can use dex2jar to convert this into a jar file.  Finally, we can use luyten to open the jar and inspect the code.
 
->```bash
+>```
 >$ unzip crack-me-if-you-can.apk classes.dex
 > Archive: crack-me-if-you-can.apk
 >  inflating: classes.dex
@@ -50,7 +50,7 @@
 > 
 > Already having the android-sdk installed, I went into the build-tools directory and grepped the output from aapt looking for the hex representation of the string reference.
 >
->```bash
+>```
 >$ ./aapt d --values resources ~/Dropbox/crack-me-if-you-can.apk | grep 0x7f0c0038
 >      spec resource 0x7f0c0038 it.polictf2015:string/àè: flags=0x00000000
 >        resource 0x7f0c0038 it.polictf2015:string/àè: t=0x03 d=0x0000017b (s=0x0008 r=0x00)
@@ -58,7 +58,7 @@
 >
 > We can see that we got a hit on the it.polictf2015:string/àè string.  Now to get the strings.xml file.  For this, we'll use apktool to open up the apk.
 >
->```bash
+>```
 >$ java -jar apktool_2.0.0.jar d ~/Dropbox/crack-me-if-you-can.apk 
 >I: Using Apktool 2.0.0 on crack-me-if-you-can.apk
 >I: Loading resource table...
@@ -135,13 +135,13 @@
 >
 > Running this code produced the following:
 >
->```bash
+>```
 >$ python ~/Dropbox/crackme.py 
 > flf{g}{Mfybe_This_Obfusfftion_Wfs_Not_Thft_Good_As_We_Thought}
 >```
 >
 > Bravo! We got the flag, but with some obvious mistakes. I'm sure I screwed up my python somewhere, but the flag is close enough that we can translate it to the correct value.  I never went back to find the mistake.  We submitted the flag and moved on.
 >
->```bash
+>```
 > flag{Maybe_This_Obfuscation_Was_Not_That_Good_As_We_Thought}
 >```
