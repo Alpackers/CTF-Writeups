@@ -1,0 +1,123 @@
+'\" t
+.\"     Title: git-mergetool
+.\"    Author: [FIXME: author] [see http://docbook.sf.net/el/author]
+.\" Generator: DocBook XSL Stylesheets v1.78.1 <http://docbook.sf.net/>
+.\"      Date: 11/26/2014
+.\"    Manual: Git Manual
+.\"    Source: Git
+.\"  Language: English
+.\"
+.TH "GIT\-MERGETOOL" "1" "11/26/2014" "Git" "Git Manual"
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+git-mergetool \- Run merge conflict resolution tools to resolve merge conflicts
+.SH "SYNOPSIS"
+.sp
+.nf
+\fIgit mergetool\fR [\-\-tool=<tool>] [\-y | \-\-[no\-]prompt] [<file>\&...]
+.fi
+.sp
+.SH "DESCRIPTION"
+.sp
+Use git mergetool to run one of several merge utilities to resolve merge conflicts\&. It is typically run after \fIgit merge\fR\&.
+.sp
+If one or more <file> parameters are given, the merge tool program will be run to resolve differences on each file (skipping those without conflicts)\&. Specifying a directory will include all unresolved files in that path\&. If no <file> names are specified, \fIgit mergetool\fR will run the merge tool program on every file with merge conflicts\&.
+.SH "OPTIONS"
+.PP
+\-t <tool>, \-\-tool=<tool>
+.RS 4
+Use the merge resolution program specified by <tool>\&. Valid values include emerge, gvimdiff, kdiff3, meld, vimdiff, and tortoisemerge\&. Run
+git mergetool \-\-tool\-help
+for the list of valid <tool> settings\&.
+.sp
+If a merge resolution program is not specified,
+\fIgit mergetool\fR
+will use the configuration variable
+merge\&.tool\&. If the configuration variable
+merge\&.tool
+is not set,
+\fIgit mergetool\fR
+will pick a suitable default\&.
+.sp
+You can explicitly provide a full path to the tool by setting the configuration variable
+mergetool\&.<tool>\&.path\&. For example, you can configure the absolute path to kdiff3 by setting
+mergetool\&.kdiff3\&.path\&. Otherwise,
+\fIgit mergetool\fR
+assumes the tool is available in PATH\&.
+.sp
+Instead of running one of the known merge tool programs,
+\fIgit mergetool\fR
+can be customized to run an alternative program by specifying the command line to invoke in a configuration variable
+mergetool\&.<tool>\&.cmd\&.
+.sp
+When
+\fIgit mergetool\fR
+is invoked with this tool (either through the
+\-t
+or
+\-\-tool
+option or the
+merge\&.tool
+configuration variable) the configured command line will be invoked with
+$BASE
+set to the name of a temporary file containing the common base for the merge, if available;
+$LOCAL
+set to the name of a temporary file containing the contents of the file on the current branch;
+$REMOTE
+set to the name of a temporary file containing the contents of the file to be merged, and
+$MERGED
+set to the name of the file to which the merge tool should write the result of the merge resolution\&.
+.sp
+If the custom merge tool correctly indicates the success of a merge resolution with its exit code, then the configuration variable
+mergetool\&.<tool>\&.trustExitCode
+can be set to
+true\&. Otherwise,
+\fIgit mergetool\fR
+will prompt the user to indicate the success of the resolution after the custom tool has exited\&.
+.RE
+.PP
+\-\-tool\-help
+.RS 4
+Print a list of merge tools that may be used with
+\-\-tool\&.
+.RE
+.PP
+\-y, \-\-no\-prompt
+.RS 4
+Don\(cqt prompt before each invocation of the merge resolution program\&. This is the default if the merge resolution program is explicitly specified with the
+\-\-tool
+option or with the
+merge\&.tool
+configuration variable\&.
+.RE
+.PP
+\-\-prompt
+.RS 4
+Prompt before each invocation of the merge resolution program to give the user a chance to skip the path\&.
+.RE
+.SH "TEMPORARY FILES"
+.sp
+git mergetool creates *\&.orig backup files while resolving merges\&. These are safe to remove once a file has been merged and its git mergetool session has completed\&.
+.sp
+Setting the mergetool\&.keepBackup configuration variable to false causes git mergetool to automatically remove the backup as files are successfully merged\&.
+.SH "GIT"
+.sp
+Part of the \fBgit\fR(1) suite

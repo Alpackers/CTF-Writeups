@@ -1,0 +1,6 @@
+framework module ReactiveViewModel {
+  umbrella header "ReactiveViewModel.h"
+
+  export *
+  module * { export * }
+}

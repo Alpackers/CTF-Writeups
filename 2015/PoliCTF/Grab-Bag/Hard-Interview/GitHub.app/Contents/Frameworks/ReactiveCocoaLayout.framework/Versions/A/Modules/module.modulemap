@@ -1,0 +1,6 @@
+framework module ReactiveCocoaLayout {
+  umbrella header "ReactiveCocoaLayout.h"
+
+  export *
+  module * { export * }
+}

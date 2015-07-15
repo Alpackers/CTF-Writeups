@@ -1,0 +1,6 @@
+framework module Primer {
+  umbrella header "Primer.h"
+
+  export *
+  module * { export * }
+}

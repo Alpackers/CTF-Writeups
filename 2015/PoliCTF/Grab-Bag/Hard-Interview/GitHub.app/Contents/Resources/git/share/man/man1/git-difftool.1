@@ -1,0 +1,227 @@
+'\" t
+.\"     Title: git-difftool
+.\"    Author: [FIXME: author] [see http://docbook.sf.net/el/author]
+.\" Generator: DocBook XSL Stylesheets v1.78.1 <http://docbook.sf.net/>
+.\"      Date: 11/26/2014
+.\"    Manual: Git Manual
+.\"    Source: Git
+.\"  Language: English
+.\"
+.TH "GIT\-DIFFTOOL" "1" "11/26/2014" "Git" "Git Manual"
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+git-difftool \- Show changes using common diff tools
+.SH "SYNOPSIS"
+.sp
+.nf
+\fIgit difftool\fR [<options>] [<commit> [<commit>]] [\-\-] [<path>\&...]
+.fi
+.sp
+.SH "DESCRIPTION"
+.sp
+\fIgit difftool\fR is a Git command that allows you to compare and edit files between revisions using common diff tools\&. \fIgit difftool\fR is a frontend to \fIgit diff\fR and accepts the same options and arguments\&. See \fBgit-diff\fR(1)\&.
+.SH "OPTIONS"
+.PP
+\-d, \-\-dir\-diff
+.RS 4
+Copy the modified files to a temporary location and perform a directory diff on them\&. This mode never prompts before launching the diff tool\&.
+.RE
+.PP
+\-y, \-\-no\-prompt
+.RS 4
+Do not prompt before launching a diff tool\&.
+.RE
+.PP
+\-\-prompt
+.RS 4
+Prompt before each invocation of the diff tool\&. This is the default behaviour; the option is provided to override any configuration settings\&.
+.RE
+.PP
+\-t <tool>, \-\-tool=<tool>
+.RS 4
+Use the diff tool specified by <tool>\&. Valid values include emerge, kompare, meld, and vimdiff\&. Run
+git difftool \-\-tool\-help
+for the list of valid <tool> settings\&.
+.sp
+If a diff tool is not specified,
+\fIgit difftool\fR
+will use the configuration variable
+diff\&.tool\&. If the configuration variable
+diff\&.tool
+is not set,
+\fIgit difftool\fR
+will pick a suitable default\&.
+.sp
+You can explicitly provide a full path to the tool by setting the configuration variable
+difftool\&.<tool>\&.path\&. For example, you can configure the absolute path to kdiff3 by setting
+difftool\&.kdiff3\&.path\&. Otherwise,
+\fIgit difftool\fR
+assumes the tool is available in PATH\&.
+.sp
+Instead of running one of the known diff tools,
+\fIgit difftool\fR
+can be customized to run an alternative program by specifying the command line to invoke in a configuration variable
+difftool\&.<tool>\&.cmd\&.
+.sp
+When
+\fIgit difftool\fR
+is invoked with this tool (either through the
+\-t
+or
+\-\-tool
+option or the
+diff\&.tool
+configuration variable) the configured command line will be invoked with the following variables available:
+$LOCAL
+is set to the name of the temporary file containing the contents of the diff pre\-image and
+$REMOTE
+is set to the name of the temporary file containing the contents of the diff post\-image\&.
+$MERGED
+is the name of the file which is being compared\&.
+$BASE
+is provided for compatibility with custom merge tool commands and has the same value as
+$MERGED\&.
+.RE
+.PP
+\-\-tool\-help
+.RS 4
+Print a list of diff tools that may be used with
+\-\-tool\&.
+.RE
+.PP
+\-\-[no\-]symlinks
+.RS 4
+\fIgit difftool\fR\(aqs default behavior is create symlinks to the working tree when run in
+\-\-dir\-diff
+mode and the right\-hand side of the comparison yields the same content as the file in the working tree\&.
+.sp
+Specifying
+\-\-no\-symlinks
+instructs
+\fIgit difftool\fR
+to create copies instead\&.
+\-\-no\-symlinks
+is the default on Windows\&.
+.RE
+.PP
+\-x <command>, \-\-extcmd=<command>
+.RS 4
+Specify a custom command for viewing diffs\&.
+\fIgit\-difftool\fR
+ignores the configured defaults and runs
+$command $LOCAL $REMOTE
+when this option is specified\&. Additionally,
+$BASE
+is set in the environment\&.
+.RE
+.PP
+\-g, \-\-gui
+.RS 4
+When
+\fIgit\-difftool\fR
+is invoked with the
+\-g
+or
+\-\-gui
+option the default diff tool will be read from the configured
+diff\&.guitool
+variable instead of
+diff\&.tool\&.
+.RE
+.PP
+\-\-[no\-]trust\-exit\-code
+.RS 4
+\fIgit\-difftool\fR
+invokes a diff tool individually on each file\&. Errors reported by the diff tool are ignored by default\&. Use
+\-\-trust\-exit\-code
+to make
+\fIgit\-difftool\fR
+exit when an invoked diff tool returns a non\-zero exit code\&.
+.sp
+\fIgit\-difftool\fR
+will forward the exit code of the invoked tool when
+\fI\-\-trust\-exit\-code\fR
+is used\&.
+.RE
+.sp
+See \fBgit-diff\fR(1) for the full list of supported options\&.
+.SH "CONFIG VARIABLES"
+.sp
+\fIgit difftool\fR falls back to \fIgit mergetool\fR config variables when the difftool equivalents have not been defined\&.
+.PP
+diff\&.tool
+.RS 4
+The default diff tool to use\&.
+.RE
+.PP
+diff\&.guitool
+.RS 4
+The default diff tool to use when
+\-\-gui
+is specified\&.
+.RE
+.PP
+difftool\&.<tool>\&.path
+.RS 4
+Override the path for the given tool\&. This is useful in case your tool is not in the PATH\&.
+.RE
+.PP
+difftool\&.<tool>\&.cmd
+.RS 4
+Specify the command to invoke the specified diff tool\&.
+.sp
+See the
+\-\-tool=<tool>
+option above for more details\&.
+.RE
+.PP
+difftool\&.prompt
+.RS 4
+Prompt before each invocation of the diff tool\&.
+.RE
+.PP
+difftool\&.trustExitCode
+.RS 4
+Exit difftool if the invoked diff tool returns a non\-zero exit status\&.
+.sp
+See the
+\-\-trust\-exit\-code
+option above for more details\&.
+.RE
+.SH "SEE ALSO"
+.PP
+\fBgit-diff\fR(1)
+.RS 4
+Show changes between commits, commit and working tree, etc
+.RE
+.PP
+\fBgit-mergetool\fR(1)
+.RS 4
+Run merge conflict resolution tools to resolve merge conflicts
+.RE
+.PP
+\fBgit-config\fR(1)
+.RS 4
+Get and set repository or global options
+.RE
+.SH "GIT"
+.sp
+Part of the \fBgit\fR(1) suite

@@ -1,0 +1,8 @@
+[
+    {
+        "id": "NoURLForSubmodule",
+        "regex": "No URL configured for submodule '(.+)'",
+        "title": "Missing Submodule URL",
+        "description": "No URL has been set for submodule \"{{1}}\". Add one to the repository's .gitmodules file and try again."
+    }
+]
