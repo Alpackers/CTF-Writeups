@@ -13,7 +13,7 @@
 ![Image of Hard Interview hint]
 (./hint.tiff)
 
->The description for the challenge is basically a quote from the movie Sworfish and we are logged in with fish@sword.  The official hint is that the host is a "not so easily reachable IP" and the user is "THE username", both of which are slightly vague.
+>The description for the challenge is basically a quote from the movie Swordfish and we are logged in with fish@sword.  The official hint is that the host is a "not so easily reachable IP" and the user is "THE username", both of which are slightly vague.
 
 >After try a few different combinations of usernames and hosts I decided to go lookup the movie clips surrounding the scene that had been quoted.  The first item that struck me was the following:
 >
