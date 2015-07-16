@@ -11,7 +11,7 @@
 > [Crack Me If You Can](crack-me-if-you-can_d4e396383e3f64ec7698efaf42f7f32b.tar.gz.gpg)
 
 ##Write-up
-> To start, we are given an apk to reverse.  The firt thing I did was attempt to decompile the code.  To do this I used a few different tools.  The first thing we need to do is unzip the apk into a dex file.  After that we can use dex2jar to convert this into a jar file.  Finally, we can use luyten to open the jar and inspect the code.
+> To start, we are given an apk to reverse.  The first thing I did was attempt to decompile the code.  To do this I used a few different tools.  The first thing we need to do is unzip the apk into a dex file.  After that we can use dex2jar to convert this into a jar file.  Finally, we can use luyten to open the jar and inspect the code.
 
 >```
 >$ unzip crack-me-if-you-can.apk classes.dex
