@@ -1,4 +1,4 @@
-#John the Traveller
+#John the Referee
 
 **Category:** Web
 **Points:** 150
