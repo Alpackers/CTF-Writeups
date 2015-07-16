@@ -40,7 +40,7 @@
 ![Image of or logic]
 (./or_logic.JPG)
 >
-> We then tried to get a ```UNION SELECT``` SQLii to work and were able to determine that only one column was being selected, however, we never were able to get the full statement to execute.  With that being said, we can just continue with the ```' or 1=1#``` query, but select which row we want to actually be displayed using ```' or 1=1 limit 1 offset 9#```.  This is basically saying select everything from the database but only return the 9th record. This returns the uniform seen at ```http://referee.polictf.it/uniform/10```, so we must be off by one. Changing the query yields:
+> We then tried to get a ```UNION SELECT``` SQLi to work and were able to determine that only one column was being selected, however, we never were able to get the full statement to execute.  With that being said, we can just continue with the ```' or 1=1#``` query, but select which row we want to actually be displayed using ```' or 1=1 limit 1 offset 9#```.  This is basically saying select everything from the database but only return the 9th record. This returns the uniform seen at ```http://referee.polictf.it/uniform/10```, so we must be off by one. Changing the query yields:
 >
 ![Image of flag]
 (./flag.JPG)
