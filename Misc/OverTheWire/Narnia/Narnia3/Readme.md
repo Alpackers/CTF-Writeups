@@ -204,7 +204,7 @@ Breakpoint 1, 0x08048585 in main ()
 >
 > There we go.  So it looks like we can redirect the output file to something of our choosing.  The target is going to be reading the ```/etc/narnia_pass/narnia4``` file.  Now we just need to come up with a way to create a payload around those two pieces of information.
 >
-> After some messing around I think I found the right track.  The input file is going to be a long name because we have to overwrite the output file at the end. At the same time, that input has to exist and we ultimately want that file to be the password file.  What if we create a symbolic link with the big long name and point it to ```/etc/narnia_pass/narnia4```.  If we can do that, then we just need to give it any other output file besides ```/dev/null``` and we should be able to retrieve the password. Let's go ahead and login and give it a try.
+> After some messing around I think I found the right track.  The input file is going to be a long name because we have to overwrite the output file at the end. At the same time, that input has to exist and we ultimately want that file to be the password file.  What if we create a symbolic link with the big long name and point it to ```/etc/narnia_pass/narnia4```?  If we can do that, then we just need to give it any other output file besides ```/dev/null``` and we should be able to retrieve the password. Let's go ahead and login and give it a try.
 >
 >```
 narnia3@melinda:/narnia$ ln -s /etc/narnia_pass/narnia4 $(python -c 'print "A"*32+"\x66\x69\x6c\x65"')
