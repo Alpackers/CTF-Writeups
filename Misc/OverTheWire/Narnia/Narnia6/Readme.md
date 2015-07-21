@@ -9,6 +9,8 @@ narnia.labs.overthewire.org
 
 ##Write-up
 
+> TODO
+>
 >```
 # ./narnia6
 ./narnia6 b1 b2
