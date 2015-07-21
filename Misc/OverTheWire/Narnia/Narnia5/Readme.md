@@ -69,7 +69,7 @@ buffer : [f76b9960ffb1f4e6] (16)
 i = 1 (0xffb1f50c)
 >```
 >
-> Looks like the right track.  Let's see if we can find our way back up the stack to our input.
+> Looks like the right track.  Let's move to gdb and see if we can find our way back up the stack to our input.
 >
 >```
 (gdb) run $(python -c 'print "AAAA"')%x%x%x%x%x%x%x
