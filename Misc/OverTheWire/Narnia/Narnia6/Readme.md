@@ -249,7 +249,7 @@ sh: 1: AAAAAAAA0,��: not found
 [Inferior 1 (process 4352) exited with code 01]
 >```
 >
-> Dude. It clearly worked, but it looks like it's using all of the first parameter as input.  Maybe we need to play with that second parameter a bit, remember, in the begining it looked like we could overwrite what appeared to be a return with 20 characters.
+> Dude. It clearly worked, but it looks like it's using all of the first parameter as input.  Maybe we need to play with that second parameter a bit, remember, in the begining it looked like we could overwrite what appeared to be a return with 20 characters.  Looking back, it was likely overwriting the function point address and just running through both buffers to do so.
 >
 >```
 (gdb) break *0x08048687
@@ -289,6 +289,6 @@ root
 # 
 >```
 >
-> I almost done want this one to end.  I've learned a lot and it feels like we've been rewarded at every turn.  Let's head to the server and get the password knowing we may have to do a bit of remapping.
+> I almost don't want this one to end.  I've learned a lot and it feels like we've been rewarded at every turn.  Let's head to the server and get the password knowing we may have to do a bit of remapping.
 >
 >
