@@ -95,6 +95,42 @@ Program received signal SIGSEGV, Segmentation fault.
 0x41414141 in ?? ()
 >```
 >
-> Well, it looks like we can overflow both parameters but our input doesn't appear to be large enough to stuff shellcode code in there.  We'll have to come up with another way.
+> Well, it looks like we can overflow both parameters but our input doesn't appear to be large enough to stuff shellcode code in there.  We'll have to come up with another way.  Let's go back to the function pointer and take a closer look at that.
 >
-> TODO
+>```asm
+             main:
+08048559         push       ebp                                                 ; XREF=_start+23
+0804855a         mov        ebp, esp
+0804855c         push       ebx                                                 ; argument #1
+0804855d         and        esp, 0xfffffff0
+08048560         sub        esp, 0x30
+08048563         mov        dword [ss:esp+0x28], 0x80483f0
+0804856b         cmp        dword [ss:ebp+arg_0], 0x3
+0804856f         je         0x8048592
+>```
+>```asm
+08048657         mov        eax, dword [ss:ebp+arg_4]
+0804865a         add        eax, 0x4
+0804865d         mov        eax, dword [ds:eax]
+0804865f         mov        dword [ss:esp+0x4], eax                             ; argument "src" for method j_strcpy
+08048663         lea        eax, dword [ss:esp+0x20]
+08048667         mov        dword [ss:esp], eax                                 ; argument "dst" for method j_strcpy
+0804866a         call       j_strcpy
+0804866f         mov        eax, dword [ss:ebp+arg_4]
+08048672         add        eax, 0x8
+08048675         mov        eax, dword [ds:eax]
+08048677         mov        dword [ss:esp+0x4], eax                             ; argument "src" for method j_strcpy
+0804867b         lea        eax, dword [ss:esp+0x18]
+0804867f         mov        dword [ss:esp], eax                                 ; argument "dst" for method j_strcpy
+08048682         call       j_strcpy
+08048687         mov        eax, dword [ss:esp+0x28]
+0804868b         and        eax, 0xff000000
+08048690         mov        ebx, eax
+08048692         call       get_sp
+08048697         cmp        ebx, eax
+08048699         jne        0x80486a7
+>```
+>```asm
+             j_printf:
+080483d0         jmp        dword [ds:printf@GOT]                               ; printf@GOT, XREF=main+40
+>```
