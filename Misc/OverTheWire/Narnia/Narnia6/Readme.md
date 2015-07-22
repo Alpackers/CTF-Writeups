@@ -108,6 +108,9 @@ Program received signal SIGSEGV, Segmentation fault.
 0804856b         cmp        dword [ss:ebp+arg_0], 0x3
 0804856f         je         0x8048592
 >```
+>
+> We can see that the function pointer is saving the address ```0x80483f0``` to the stack.  Let's move to gdb and see if we can actually get the memory address where the function pointer is pointing to.
+>
 >```asm
 08048657         mov        eax, dword [ss:ebp+arg_4]
 0804865a         add        eax, 0x4
