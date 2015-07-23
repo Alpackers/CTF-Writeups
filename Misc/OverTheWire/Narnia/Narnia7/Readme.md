@@ -1,3 +1,28 @@
+#Narnia7
+
+narnia.labs.overthewire.org
+
+**Username:** narnia7
+**Password:** see [narnia6](https://github.com/Alpackers/CTF-Writeups/tree/master/Misc/OverTheWire/Narnia/Naria6)
+**Description:**  
+> This wargame is for the ones that want to learn basic exploitation. You can see the most common bugs in this game and we've tried to make them easy to exploit. You'll get the source code of each level to make it easier for you to spot the vuln and abuse it.  
+
+##Write-up
+
+> Let's go ahead and run the program and see what it does.
+>
+>```
+# ./narnia7 AAAA
+goodfunction() = 0x80486e0
+hackedfunction() = 0x8048706
+>
+before : ptrf() = 0x80486e0 (0xff9a7f5c)
+I guess you want to come to the hackedfunction...
+Welcome to the goodfunction, but i said the Hackedfunction..
+>```
+>
+> Well, we can see what appears to be the addresses of a good function and hacked function and a reference to another address. No sign of our user-supplied input though. Let's look at the source and see if we can pick out what's going on.
+>
 >```C
 /*
     This program is free software; you can redistribute it and/or modify
@@ -66,6 +91,39 @@ int hackedfunction(){
         return 0;
 }
 >```
+>
+> Ok, it seems pretty obvious looking at this code that we need to change ```ptrf``` from pointing to ```goodfunction``` to ```hackedfunction```.  Our input appears to be passed in directly to the ```snprintf``` function and is being used as the format value.  Sounds like we will be working on another string format issue.  Let's poke around at that first.
+>
+>```
+# ./narnia7 $(python -c 'print "AAAA"+"%x"*10')
+goodfunction() = 0x80486e0
+hackedfunction() = 0x8048706
+>
+before : ptrf() = 0x80486e0 (0xffa2277c)
+I guess you want to come to the hackedfunction...
+Welcome to the goodfunction, but i said the Hackedfunction..
+# ./narnia7 $(python -c 'print "AAAA"+"%x"*100')
+goodfunction() = 0x80486e0
+hackedfunction() = 0x8048706
+>
+before : ptrf() = 0x80486e0 (0xfffc721c)
+I guess you want to come to the hackedfunction...
+Welcome to the goodfunction, but i said the Hackedfunction..
+# ./narnia7 $(python -c 'print "AAAA"*1000')
+goodfunction() = 0x80486e0
+hackedfunction() = 0x8048706
+>
+before : ptrf() = 0x80486e0 (0xff9f57ac)
+I guess you want to come to the hackedfunction...
+Welcome to the goodfunction, but i said the Hackedfunction..
+>```
+>
+> Hmmm.  Nothing seems to be affecting it.  Even inserting 1000 ```A``` didn't phase it.  Looks like I'm going to have to do some more reseach on string format vulnerabilities.
+>
+> Here's a great article: [Format String Exploitation-Tutorial](https://www.exploit-db.com/docs/28476.pdf)
+>
+> Let's try some of the stuff they are doing in there.
+>
 >```
 # ltrace ./narnia7 $(python -c 'print "AAAA"+"%x"*10')
 __libc_start_main(0x804868f, 2, 0xff942074, 0x8048740, 0x80487b0 <unfinished ...>
@@ -87,3 +145,5 @@ fflush(0xf77884e0)                                           = 0
 exit(0 <unfinished ...>
 +++ exited (status 0) +++
 >```
+>
+> TODO
