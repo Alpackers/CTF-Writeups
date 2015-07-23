@@ -126,6 +126,13 @@ Welcome to the goodfunction, but i said the Hackedfunction..
 >
 >```
 # ltrace ./narnia7 $(python -c 'print "AAAA"+"%x"*10')
+bash: ltrace: command not found
+>```
+>
+> Looks like we'll have to do a quick ```apt-get install ltrace``` before we can test it out.
+>
+>```
+# ltrace ./narnia7 $(python -c 'print "AAAA"+"%x"*10')
 __libc_start_main(0x804868f, 2, 0xff942074, 0x8048740, 0x80487b0 <unfinished ...>
 memset(0xff941f20, '\000', 128)                              = 0xff941f20
 printf("goodfunction() = %p\n", 0x80486e0goodfunction() = 0x80486e0
