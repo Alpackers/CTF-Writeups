@@ -257,7 +257,7 @@ I guess you want to come to the hackedfunction...
 Way to go!!!!$ whoami
 narnia8
 $ cat /etc/narnia_pass/narnia8
-mohthuphog
+**********
 $ 
 >```
 >
