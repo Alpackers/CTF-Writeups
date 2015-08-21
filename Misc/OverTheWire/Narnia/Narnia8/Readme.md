@@ -107,7 +107,7 @@ AAAAAAAAAAAAAAAAAAAAAG��
 [Inferior 1 (process 1974) exited normally]
 >```
 >
-> We definately are not seeing the full output.  Let's set a breakpoint and see if we can figure out what's going on.
+> We definately are not seeing the full output.  Let's set find a good location to set a breakpoint and see if we can figure out what's going on.
 >
 >```asm
 (gdb) disas func
@@ -150,7 +150,7 @@ Dump of assembler code for function func:
 End of assembler dump.
 >```
 >
-> Let's run a normal run again and just stop right before our data is printed.
+> Let's just stop right before our data is printed and try to run it again.
 >
 >```
 (gdb) break *0x080484a7
@@ -168,7 +168,7 @@ Breakpoint 1, 0x080484a7 in func ()
 0xff883890:	0xff884640	0xf7771000	0x080484fb	0xf7727000
 >```
 >
-> In the first dump of the stack we can see our ```A``` and we can even see our return ```0x080484cd``` at ```0xff88387c```.  Now we can check and see what the difference is with a larger input.
+> Good. We can see our ```A``` and even the return ```0x080484cd``` at ```0xff88387c```.  Now we can check and see what the difference is with a larger input.
 >
 >```
 (gdb) x/20x $esp
