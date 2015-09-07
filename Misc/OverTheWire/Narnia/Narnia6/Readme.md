@@ -146,7 +146,7 @@ $1 = (void *) 0xffffd4e8
 08048699         jne        0x80486a7
 >```
 >
-> Both parameters that get submitted are run through ```strcpy```.  Let's go back to gdb and set a breakpoint just after the second ```stfcpy``` and examine the stack.
+> Both parameters that get submitted are run through ```strcpy```.  Let's go back to gdb and set a breakpoint just after the second ```strcpy``` and examine the stack.
 >
 >```
 (gdb) run $(python -c 'print "A"*8') $(python -c 'print "B"*8')
