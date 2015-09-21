@@ -52,7 +52,7 @@ This one took the longest by far.  A quick look back at his LinkedIn profile rev
 ![Image of enigma]
 (./Images/enigma.tiff)
 
-After many others tries, we finally hit ```enigma``` which in turn gives us:
+After many other tries, we finally hit ```enigma``` which in turn gives us:
 
 ![Image of 4]
 (./Images/4.tiff)
