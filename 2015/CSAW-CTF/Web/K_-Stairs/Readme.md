@@ -38,6 +38,9 @@ We wasted a lot of time here trying to buy this token by changing the ```bid``` 
 
 Before you comment on the number of tokens being shown above while trying to purchase a ```100``` compass, these images were taken after the fact.  We had closer to ```200``` tokens available while testing and were never able to purchase this item.  So moving back to collecting tokens.  After we finished registering enough users, we went ahead and purchased the ```10``` token compass, a bunch of food, and headed off on our quest.
 
+![Image of tokens_after]
+(./Images/tokens_after.png)
+
 ![Image of compass]
 (./Images/compass.png)
 
