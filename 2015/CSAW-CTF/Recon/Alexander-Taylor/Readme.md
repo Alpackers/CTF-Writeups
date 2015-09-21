@@ -10,7 +10,7 @@ http://fuzyll.com/csaw2015/start
 We get our first clue from hitting the link in the description.
 
 ![Image of 1]
-(./Images/1.tiff)
+(./Images/1.png)
 
 We are left with an unkown numbers of steps, but at least we have somewhere to start.  Off to google.  Using both the his name and domain name for searches on linkedin we find the following.
 
