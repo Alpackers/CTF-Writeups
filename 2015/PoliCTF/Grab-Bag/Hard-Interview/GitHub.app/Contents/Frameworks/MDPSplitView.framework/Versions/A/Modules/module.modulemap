@@ -1,6 +1,0 @@
-framework module MDPSplitView {
-  umbrella header "MDPSplitView.h"
-
-  export *
-  module * { export * }
-}

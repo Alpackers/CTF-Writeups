@@ -1,6 +1,0 @@
-framework module Rebel {
-  umbrella header "Rebel.h"
-
-  export *
-  module * { export * }
-}

@@ -1,6 +1,0 @@
-framework module Archimedes {
-  umbrella header "Archimedes.h"
-
-  export *
-  module * { export * }
-}
