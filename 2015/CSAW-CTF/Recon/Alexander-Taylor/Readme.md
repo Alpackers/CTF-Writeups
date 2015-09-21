@@ -15,55 +15,55 @@ We get our first clue from hitting the link in the description.
 We are left with an unkown numbers of steps, but at least we have somewhere to start.  Off to google.  Using both the his name and domain name for searches on linkedin we find the following.
 
 ![Image of linkedin]
-(./Images/linkedin.tiff)
+(./Images/linkedin.png)
 
 Another quick google for USF's hacking club leads us to:
 
 ![Image of wscs]
-(./Images/wcsc.tiff)
+(./Images/wcsc.png)
 
 Trying the acronym leads us to step 2.
 
 ![Image of 2]
-(./Images/2.tiff)
+(./Images/2.png)
 
 Here we are given a base64 encoded message.  Decoding gives us our next clue.
 
 ![Image of decode]
-(./Images/decode.tiff)
+(./Images/decode.png)
 
 Back to google we go.  Using ```fuzyll``` and ```Super Smash Brothers``` we find a hit on ```smashboards.com```.
 
 ![Image of forum]
-(./Images/yoshi_forum.tiff)
+(./Images/yoshi_forum.png)
 
 The profile name is ```fuzyll``` and with all of the postings regarding ```yoshi``` I believe we have our character.
 
 ![Image of 3]
-(./Images/3.tiff)
+(./Images/3.png)
 
 This one took a touch longer than the others, but any forensic activity on the image will reveal our next clue.
 
 ![Image of text]
-(./Images/yoshi_text.tiff)
+(./Images/yoshi_text.png)
 
 This one took the longest by far.  A quick look back at his LinkedIn profile reveals that he has placed in the DEFCON finals for DEFCON 19, 20, 21, and 22.  I started my search on DEFCON 17 and 18 figuring he didn't make it to the finals on his first attempt.  A lot of searching led me here:
 
 ![Image of enigma]
-(./Images/enigma.tiff)
+(./Images/enigma.png)
 
 After many other tries, we finally hit ```enigma``` which in turn gives us:
 
 ![Image of 4]
-(./Images/4.tiff)
+(./Images/4.png)
 
 This was another easy step.  We can use the developer tools to quickly run the javascript with the given string.
 
 ![Image of js]
-(./Images/js.tiff)
+(./Images/js.png)
 
 Doing so gives us the final path and in turn, the flag.
 
 ![Image of 5]
-(./Images/5.tiff)
+(./Images/5.png)
 
