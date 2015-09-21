@@ -10,4 +10,4 @@
 Hitting the site, we are welcomed with the following site:
 
 ![Image of site]
-(./intro.tiff)
+(./Images/intro.tiff)
