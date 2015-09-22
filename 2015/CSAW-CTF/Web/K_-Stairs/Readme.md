@@ -28,7 +28,7 @@ During our recon we also noticed a hidden compass that said it costs 100 tokens.
 ![Image of hidden compass]
 (./Images/hidden.png)
 
-We wasted a lot of time here trying to buy this token by changing the ```bid``` parameter to ```4```, as we thought perhaps it would give us an upper hand while actually playing the game.  No matter what we did we were always greeted with the ```nO-oP``` message.
+We wasted a lot of time here trying to buy this upgraded compass by changing the ```bid``` parameter to ```4```, as we thought perhaps it would give us an upper hand while actually playing the game.  No matter what we did we were always greeted with the ```nO-oP``` message.
 
 ![Image of bid]
 (./Images/bid.png)
