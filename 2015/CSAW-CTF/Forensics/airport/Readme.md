@@ -7,7 +7,10 @@
 [airport_26321e6eac7a7490e527cbe27ceb68c1.zip](airport_26321e6eac7a7490e527cbe27ceb68c1.zip)
 
 ##Write-up
-We get our first clue from hitting the link in the description.
+We get our first clue from hitting the link in the description and retrieving the zip file.  This file contains four .png and one .jpg file.  The four png images are aerial views of various unknown airfields.  The jpg image is a banner of the popular Steganography program called Steghide.  After reviewing the Steghide documentation, it's clear the program only supports JPEG, BMP, WAV and AU files.  This was the first clue that the hidden data was in the only jpg file contained in the zip file.
+
+The next step was to determine what airfields were depicted in four png images.  Each airfield image contained at least one highway/road number in the embedded on the photo.  This led to google searches in an attempt to identify all four airfields.  e.g., airport highway 1 revealed Los Angeles International Airport (LAX) for image 3.png.  
+  
 
 ![Image of 1]
 (./Images/1.png)
@@ -18,7 +21,7 @@ blabllablb
 >```python
 HAV - José Martí International Airport
 HKG - Hong Kong International Airport
-LAX - Los Angeles
+LAX - Los Angeles International Airport
 YYZ - Toronto Pearson International Airport
 >```
 
