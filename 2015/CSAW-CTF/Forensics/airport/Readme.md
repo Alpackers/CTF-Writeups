@@ -20,11 +20,11 @@ The hardest part of solving this challenge was 1.png.  The airfield in questions
 ![Image of 1]
 (./Images/1.png)
 
-Hong Kong International Airport
+Also identifed were Hong Kong International Airport
 ![Image of 2]
 (./Images/2.png)
 
-Toronto Pearson International Airport
+And Toronto Pearson International Airport
 ![Image of 4]
 (./Images/4.png)
 
