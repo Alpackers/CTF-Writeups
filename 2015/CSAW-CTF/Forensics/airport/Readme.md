@@ -7,17 +7,29 @@
 [airport_26321e6eac7a7490e527cbe27ceb68c1.zip](airport_26321e6eac7a7490e527cbe27ceb68c1.zip)
 
 ##Write-up
-We get our first clue from hitting the link in the description and retrieving the zip file.  This file contains four .png and one .jpg file.  The four png images are aerial views of various unknown airfields.  The jpg image is a banner of the popular Steganography program called Steghide.  After reviewing the Steghide documentation, it's clear the program only supports JPEG, BMP, WAV and AU files.  This was the first clue that the hidden data was in the only jpg file contained in the zip file.
+ We get our first clue from hitting the link in the description and retrieving the zip file.  This file contains four .png and one .jpg file.  The four png images are aerial views of various unknown airfields.  The jpg image is a banner of the popular Steganography program called Steghide.  After reviewing the Steghide documentation, it's clear the program only supports JPEG, BMP, WAV and AU files.  This was the first clue that the hidden data was in the only jpg file contained in the zip file.
 
-The next step was to determine what airfields were depicted in four png images.  Each airfield image contained at least one highway/road number in the embedded on the photo.  This led to google searches in an attempt to identify all four airfields.  e.g., airport highway 1 revealed Los Angeles International Airport (LAX) for image 3.png.  
-  
+The next step was to determine what airfields were depicted in four png images.  Each airfield image contained at least one highway/road number in the embedded on the photo.  This led to google searches in an attempt to identify all four airfields.  e.g., airport highway 1 revealed Los Angeles International Airport (LAX) for image 3.png.
+
+![Image of 3]
+(./Images/3.png)
+
+The hardest part of solving this challenge was 1.png.  The airfield in questions indicates yellow road numbers.  After massive google searches it was determined many European countries use these colors. However, no results were identified.  Further review of the image showed a baseball diamond at the top of the image indicating that the airfield was likely not in Europe.  Other countries that use the same color signs finally revealed Cuba (José Martí International Airport) as the answer.
+
 
 ![Image of 1]
 (./Images/1.png)
 
-blablalbalblbl
+Hong Kong International Airport
+![Image of 2]
+(./Images/2.png)
 
-blabllablb
+Toronto Pearson International Airport
+![Image of 4]
+(./Images/4.png)
+
+After all four airfields were identifed it was just a matter of determinig their three letter international identifier.
+
 >```python
 HAV - José Martí International Airport
 HKG - Hong Kong International Airport
