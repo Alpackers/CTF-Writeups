@@ -28,7 +28,7 @@ And Toronto Pearson International Airport
 ![Image of 4]
 (./Images/4.png)
 
-After all four airfields were identifed it was just a matter of determinig their three letter international identifier.
+After all four airfields were identifed it was just a matter of determining their three letter international identifier.
 
 >```python
 HAV - José Martí International Airport
@@ -37,9 +37,9 @@ LAX - Los Angeles International Airport
 YYZ - Toronto Pearson International Airport
 >```
 
-We concatenated the airport codes together to create the passphrase ```HAVHKGLAXYYZ```
+We concatenated the airport codes together to create the passphrase ```HAVHKGLAXYYZ``` Using Steghide we used the ```--info``` option and the passphrase to detetermine if there was an embedded file in the image.
 
->```dos
+>```
 c:\steghide-0.5.1-win32\steghide>steghide.exe --info steghide.jpg
 "steghide.jpg":
   format: jpeg
@@ -51,6 +51,8 @@ Enter passphrase:HAVHKGLAXYYZ
     encrypted: rijndael-128, cbc
     compressed: yes
 >```
+
+Once confirmed,  we extracted the file and obtained the flag in the form of the key.txt file.
 
 >```
 c:\steghide-0.5.1-win32\steghide>steghide.exe extract -sf steghide.jpg
