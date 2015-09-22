@@ -8,7 +8,7 @@
 http://54.152.84.91
 
 ##Write-up
-Hitting the site, we are welcomed with the following site:
+Hitting the site, we are welcomed with the following:
 
 ![Image of site]
 (./Images/home.png)
