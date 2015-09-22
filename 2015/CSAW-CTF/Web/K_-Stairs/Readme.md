@@ -18,7 +18,7 @@ Immediately we register and start looking around.
 ![Image of registration]
 (./Images/register.png)
 
-So, straight off the bat we notice that we were given 3 tokens for registering to play and that their appears to be DLC content available to help us in our conquest.  After a lot of playing around and throwing things (the site was very slow and buggy at times) we noticed that if you register and then just logout and re-register it aggregated your tokens.
+So, straight off the bat we notice that we were given 3 tokens for registering to play and there appears to be DLC content available to help us in our conquest.  After a lot of playing around and throwing things (the site was very slow and buggy at times), we noticed that if you register and then just logout and re-register it aggregates your tokens.
 
 ![Image of tokens]
 (./Images/tokens.png)
