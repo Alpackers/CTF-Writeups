@@ -18,7 +18,7 @@ root@ctf:~/Downloads/CTF# cat eps1.1_ones-and-zer0es_c4368e65e1883044f3917485ec9
 
 >```
 
-The file contains a binary text.  There are serveral websites such as http://www.binaryhexconverter.com/binary-to-ascii-text-converter that can convert binary text to ascii.  A better way though is to use python:
+The file contains binary text.  There are serveral websites such as http://www.binaryhexconverter.com/binary-to-ascii-text-converter that can convert binary text to ascii.  A better way though is to use python:
 
 >```python
 #!/usr/bin/python
@@ -26,13 +26,12 @@ The file contains a binary text.  There are serveral websites such as http://www
 import sys
 import binascii
 
-# open first item passed to it
 with open (sys.argv[1], "r") as myfile:
    data=myfile.read().replace('\n', '')
 
 n = int(data, 2)
 print binascii.unhexlify('%x' % n)
->```
+>```python
 
 >```
 root@ctf:~/Downloads/CTF# ./binary.2.ascii.py eps1.1_ones-and-zer0es_c4368e65e1883044f3917485ec928173.mpeg 
