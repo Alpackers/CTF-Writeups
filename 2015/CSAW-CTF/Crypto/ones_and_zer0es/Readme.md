@@ -22,13 +22,13 @@ The file contains binary text.  There are serveral websites such as http://www.b
 
 >```python
 #!/usr/bin/python
-
+>```python
 import sys
 import binascii
-
+>```python
 with open (sys.argv[1], "r") as myfile:
    data=myfile.read().replace('\n', '')
-
+>```python
 n = int(data, 2)
 print binascii.unhexlify('%x' % n)
 >```python
