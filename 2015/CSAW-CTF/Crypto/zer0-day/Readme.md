@@ -11,13 +11,18 @@ eps1.9_zer0-day_b7604a922c8feef666a957933751a074.avi
 The eps1.9_zer0-day_b7604a922c8feef666a957933751a074.avi file is actually ascii text
 
 >```
-root@ctf:~/Downloads/CTF# base64 -d eps1.9_zer0-day_b7604a922c8feef666a957933751a074.avi 
-Evil Corp, we have delivered on our promise as expected. base64: invalid input
+root@ctf:~/Downloads/CTF# file eps1.9_zer0-day_b7604a922c8feef666a957933751a074.avi
+eps1.9_zer0-day_b7604a922c8feef666a957933751a074.avi: ASCII text, with very long lines
+root@ctf:~/Downloads/CTF# cat eps1.9_zer0-day_b7604a922c8feef666a957933751a074.avi
+RXZpbCBDb3JwLCB3ZSBoYXZlIGRlbGl2ZXJlZCBvbiBvdXIgcHJvbWlzZSBhcyBleHBlY3RlZC4g\nVGhlIHBlb3BsZSBvZiB0aGUgd29ybGQgd2hvIGhhdmUgYmVlbiBlbnNsYXZlZCBieSB5b3UgaGF2\nZSBiZWVuIGZyZWVkLiBZb3VyIGZpbmFuY2lhbCBkYXRhIGhhcyBiZWVuIGRlc3Ryb3llZC4gQW55\nIGF0dGVtcHRzIHRvIHNhbHZhZ2UgaXQgd2lsbCBiZSB1dHRlcmx5IGZ1dGlsZS4gRmFjZSBpdDog\neW91IGhhdmUgYmVlbiBvd25lZC4gV2UgYXQgZnNvY2lldHkgd2lsbCBzbWlsZSBhcyB3ZSB3YXRj\naCB5b3UgYW5kIHlvdXIgZGFyayBzb3VscyBkaWUuIFRoYXQgbWVhbnMgYW55IG1vbmV5IHlvdSBv\nd2UgdGhlc2UgcGlncyBoYXMgYmVlbiBmb3JnaXZlbiBieSB1cywgeW91ciBmcmllbmRzIGF0IGZz\nb2NpZXR5LiBUaGUgbWFya2V0J3Mgb3BlbmluZyBiZWxsIHRoaXMgbW9ybmluZyB3aWxsIGJlIHRo\nZSBmaW5hbCBkZWF0aCBrbmVsbCBvZiBFdmlsIENvcnAuIFdlIGhvcGUgYXMgYSBuZXcgc29jaWV0\neSByaXNlcyBmcm9tIHRoZSBhc2hlcyB0aGF0IHlvdSB3aWxsIGZvcmdlIGEgYmV0dGVyIHdvcmxk\nLiBBIHdvcmxkIHRoYXQgdmFsdWVzIHRoZSBmcmVlIHBlb3BsZSwgYSB3b3JsZCB3aGVyZSBncmVl\nZCBpcyBub3QgZW5jb3VyYWdlZCwgYSB3b3JsZCB0aGF0IGJlbG9uZ3MgdG8gdXMgYWdhaW4sIGEg\nd29ybGQgY2hhbmdlZCBmb3JldmVyLiBBbmQgd2hpbGUgeW91IGRvIHRoYXQsIHJlbWVtYmVyIHRv\nIHJlcGVhdCB0aGVzZSB3b3JkczogImZsYWd7V2UgYXJlIGZzb2NpZXR5LCB3ZSBhcmUgZmluYWxs\neSBmcmVlLCB3ZSBhcmUgZmluYWxseSBhd2FrZSF9Ig==
 >```
 
 This looks to be base64 encoded but it doesn't decode cleanly:
 
-
+>```
+root@ctf:~/Downloads/CTF# base64 -d eps1.9_zer0-day_b7604a922c8feef666a957933751a074.avi 
+Evil Corp, we have delivered on our promise as expected. base64: invalid input
+>```
 
 That's because of the newline \n characters.  You can remove them with sed
 
