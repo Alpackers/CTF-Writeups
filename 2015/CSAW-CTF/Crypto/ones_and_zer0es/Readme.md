@@ -22,16 +22,13 @@ The file contains binary text.  There are serveral websites such as http://www.b
 
 >```python
 #!/usr/bin/python
-
 import sys
 import binascii
->```python
 with open (sys.argv[1], "r") as myfile:
    data=myfile.read().replace('\n', '')
->```python
 n = int(data, 2)
 print binascii.unhexlify('%x' % n)
->```python
+>```
 
 >```
 root@ctf:~/Downloads/CTF# ./binary.2.ascii.py eps1.1_ones-and-zer0es_c4368e65e1883044f3917485ec928173.mpeg 
