@@ -24,11 +24,15 @@ The file contains binary text.  There are serveral websites such as http://www.b
 #!/usr/bin/python
 import sys
 import binascii
-with open (sys.argv[1], "r") as myfile:
-   data=myfile.read().replace('\n', '')
-n = int(data, 2)
-print binascii.unhexlify('%x' % n)
+for file in sys.argv[1:]:
+   # open file
+   with open (file, "r") as myfile:
+      data=myfile.read().replace('\n', '')
+      print "### ", file , " convert binary to ascii ###"
+      n = int(data, 2)
+      print binascii.unhexlify('%x' % n)
 >```
+
 
 >```
 root@ctf:~/Downloads/CTF# ./binary.2.ascii.py eps1.1_ones-and-zer0es_c4368e65e1883044f3917485ec928173.mpeg 
