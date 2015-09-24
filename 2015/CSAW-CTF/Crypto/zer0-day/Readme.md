@@ -1,4 +1,4 @@
-#Airport
+#zer0-day
 
 **Category:** Crypto
 **Points:** 50
