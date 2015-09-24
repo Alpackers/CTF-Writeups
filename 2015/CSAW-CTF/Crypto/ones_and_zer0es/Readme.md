@@ -22,7 +22,7 @@ The file contains binary text.  There are serveral websites such as http://www.b
 
 >```python
 #!/usr/bin/python
->```python
+
 import sys
 import binascii
 >```python
