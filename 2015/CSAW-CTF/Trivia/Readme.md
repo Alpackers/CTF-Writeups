@@ -15,13 +15,13 @@ Trivia 1
 --------
 Q: This family of malware has gained notoriety after anti-virus and threat intelligence companies claimed that it was being used by several Chinese military groups.
 
-A: plugX , took a little trail and error since there are so many malware families connected to Chinese hacking groups. More information about plugx can be found at [this blackhat talk](https://www.blackhat.com/docs/asia-14/materials/Haruyama/Asia-14-Haruyama-I-Know-You-Want-Me-Unplugging-PlugX.pdf).  
+A: plugX , took a little trial and error since there are so many malware families connected to Chinese hacking groups. More information about plugx can be found at [this blackhat talk](https://www.blackhat.com/docs/asia-14/materials/Haruyama/Asia-14-Haruyama-I-Know-You-Want-Me-Unplugging-PlugX.pdf).  
 
 Trivia 2
 --------
 Q: 	No More Free __!
 
-A: Bugs, No More Free Bugs Meme starting at CanSecWest, more details can be found at [Trail of Bits' website](http://blog.trailofbits.com/2009/03/22/no-more-free-bugs/)
+A: Bugs, It's a meme starting at security conference CanSecWest, [Trail of Bits' website](http://blog.trailofbits.com/2009/03/22/no-more-free-bugs/)
 
 Trivia 3
 --------
@@ -45,4 +45,4 @@ Trivia 6
 --------
 Q:  This Pentesting expert supplied HBO's Silicon Valley with technical advice in season 2. The flag is his twitter handle.
 
-A:  Searched for the pentesting expert on Silicon Valley, and found the one and only Rob Fuller aka - [Mubix!](https://twitter.com/mubix)
+A:  A little googling on a cell phone while looking at other challenges found this one. Rob Fuller  [Mubix!](https://twitter.com/mubix)
