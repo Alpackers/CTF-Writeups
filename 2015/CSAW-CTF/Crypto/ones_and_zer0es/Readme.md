@@ -4,7 +4,7 @@
 **Points:** 50
 **Description:** NA
 
-eps1.1_ones-and-zer0es_c4368e65e1883044f3917485ec928173.mpeg
+[eps1.1_ones-and-zer0es_c4368e65e1883044f3917485ec928173.mpeg](eps1.1_ones-and-zer0es_c4368e65e1883044f3917485ec928173.mpeg)
 
 ##Write-up##
 
