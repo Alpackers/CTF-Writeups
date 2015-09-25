@@ -29,6 +29,6 @@ Well, that's unfortunate.  There's probably a better automated way to do it but 
 So now we're dealing with a single substitution cipher that isn't based on rotating the charcters. To the internet! http://quipqiup.com/
 
 ![quipquip ouput]
-(.quipquip.out.png)
+(./quipquip.out.png)
 
 
