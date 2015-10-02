@@ -9,7 +9,7 @@ My friend sends me pictures before every ctf. He told me this one was special.
 Note: this flag doesn't follow the "flag{}" format
 
 ##Write-up
-Our first clues come from the actual CTF description. The CTF description identifies this file as a possible image file and states this image is special. This caused me to immediately start thinking this CTF would be related to steganography ([Steganography](https://en.wikipedia.org/wiki/Steganography) is the practice of concealing data within another file). The CTF description also states that the flag does not follow the "flag{}" format so I will need to keep an open mind when searching for the flag and not focus on the word 'flag' per se. 
+Our first clues come from the actual description. The challenge identifies this file as a possible image file and states this image is special. This caused me to immediately start thinking this challenge would be related to steganography ([Steganography](https://en.wikipedia.org/wiki/Steganography) is the practice of concealing data within another file). The description also states that the flag does not follow the "flag{}" format so I will need to keep an open mind when searching for the flag and not focus on the word 'flag' per se. 
 
 At first glance the file appears to be a normal image file. It displays properly in an image viewer and there are no error messages present when trying to open the file. 
 
