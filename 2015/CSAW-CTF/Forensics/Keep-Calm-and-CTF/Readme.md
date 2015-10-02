@@ -18,7 +18,7 @@ At first glance the file appears to be a normal image file. It displays properly
 In cases where I suspect steganography what I usually do is first is open the file with a hex editor to see if anything obviously jumps out at me as hidden data. 
 
 
-So I open the file with [Hex Edit](www.hexedit.com) and take a quick look. 
+So I open the file with [Hex Edit](http://www.hexedit.com) and take a quick look. 
 ![CTF Image](./Images/CTF2.jpg)]
 
 Scrolling thru the file I can quickly see there appears to be a message hidden at the top of the file.
