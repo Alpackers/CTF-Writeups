@@ -13,7 +13,7 @@ Our first clues come from the actual CTF description. The CTF description identi
 
 At first glance the file appears to be a normal image file. It displays properly in an image viewer and there are no error messages present when trying to open the file. 
 
-![CTF Image](./Images/img.jpg)]
+![CTF Image](./Images/img.jpg)
 
 In cases where I suspect steganography what I usually do is first is open the file with a hex editor to see if anything obviously jumps out at me as hidden data. 
 
