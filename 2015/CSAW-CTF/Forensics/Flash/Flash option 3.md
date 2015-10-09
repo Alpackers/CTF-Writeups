@@ -14,16 +14,18 @@ My first step was to download the image file and examine it with the [SANS Inves
 available to the whole community as a public service. 
 ![CTF Image](./Images/CTF1.jpg)
 
-Open a terminal type the following command for your your image file. srch_string -t d flash.img >output.asc
+Open a terminal type the following command for your your image file. 
+```srch_string -t d flash.img >output.asc ```
 ![CTF Image](./Images/CTF31.jpg)
 
-Now us vi to open the file output.asc. vi output.asc
+Now us vi to open the file output.asc. 
+```vi output.asc```
 ![CTF Image](./Images/CTF32.jpg)
 
 Viewing the file output.asc we see the strings extracted from the image file:
 ![CTF Image](./Images/CTF33.jpg)
 
-Use the vi command / to search for the string flag{:
+Use the vi command ```/``` to search for the string ```flag{```:
 ![CTF Image](./Images/CTF34.jpg)
 
 We are able to quickly locate the flag in this image file:
