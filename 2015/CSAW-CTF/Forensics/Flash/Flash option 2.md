@@ -9,7 +9,7 @@ We were able to grab an image of a hard drive. Find out what's on it.
 ##Write-up
 Based on the information provided it appears that we will be dealing with an [image](https://en.wikipedia.org/wiki/Disk_image) of a flash hard drive so I am expecting that I will be using forensic software to analyze the file.
 
-My first step was to download the image file and examine it with the [SANS Investigative Forensic Toolkit] (http://digital-forensics.sans.org/community/downloads). The SANS Investigative Forensic Toolkit (SIFT)  is a virtual workstation created for incident response and digital forensics use and made it available to the whole community as a public service. 
+My first step was to download the image file and examine it with the [SANS Investigative Forensic Toolkit] (http://digital-forensics.sans.org/community/downloads). The SANS Investigative Forensic Toolkit (SIFT)  is a virtual workstation created for incident response and digital forensics use and made available to the whole community as a public service. 
 ![CTF Image](./Images/CTF1.jpg)
 
 The first step is to start the forensic application Autopsy installed on the SIFT.
