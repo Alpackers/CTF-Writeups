@@ -14,12 +14,10 @@ My first step was to download the image file and examine it with the [SANS Inves
 available to the whole community as a public service. 
 ![CTF Image](./Images/CTF1.jpg)
 
-Open a terminal type the following command for your your image file. 
-```srch_string -t d flash.img >output.asc ```
+Open a terminal type the following command ```srch_string -t d flash.img>output.asc ``` for your your image file. 
 ![CTF Image](./Images/CTF31.jpg)
 
-Now us vi to open the file output.asc. 
-```vi output.asc```
+Now use the vi editor ```vi output.asc``` to open the file output.asc. 
 ![CTF Image](./Images/CTF32.jpg)
 
 Viewing the file output.asc we see the strings extracted from the image file:
