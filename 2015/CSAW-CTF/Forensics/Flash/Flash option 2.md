@@ -57,10 +57,10 @@ We want to start with a keyword search so we click on the Keyword Search button
 ![CTF Image](./Images/CTF15.jpg)
 
 We leave the default options and enter our search term of 'flag' and click search
-![CTF Image](./Images/CTF16.jpg)
+![CTF Image](./Images/CTF16B.jpg)
 
 We can see that there were quite a number of search results returned (397 hits for the term 'flag'). Let's click on Keyword search again and see if we can narrow our results buy changing our search parameters.
-![CTF Image](./Images/CTF17.jpg)
+![CTF Image](./Images/CTF17B.jpg)
 
 Let's enter the search term 'flag{', hit Keyword Search, and compare the results to the previous search.
 ![CTF Image](./Images/CTF18.jpg)
