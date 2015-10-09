@@ -14,9 +14,9 @@ I never know how well data is going to be hidden in a file so I open this file w
 ![CTF Image](./Images/CTF41A.jpg)]
 
 I perform a simple search for the term ```flag``` and I get numerous hits.
-![CTF Image](./Images/CTF42.jpg)]
+![CTF Image](./Images/CTF42A.jpg)]
 
 So to reduce the scope of the search I change the search term to ```flag{``` and I am immediately taken to the flag for this CTF ```flag{b3l0w_th3_r4dar}```
-![CTF Image](./Images/CTF43.jpg)]
+![CTF Image](./Images/CTF43A.jpg)]
 
 The flag recovered to solve this CTF is ```flag{b3l0w_th3_r4dar}```
