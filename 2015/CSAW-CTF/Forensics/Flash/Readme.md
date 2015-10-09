@@ -19,3 +19,6 @@ This option demonstrates how to use the Autopsy Forensic Browser with The Sleuth
 
 [Flash Option 3](Flash%20option%203.md)
 This option demonstrates how to use The Sleuth Kit command 'srch_strings' running on the [SANS Investigative Forensic Toolkit] (http://digital-forensics.sans.org/community/downloads).
+
+[Flash Option 4](Flash%20option%204.md)
+This option demonstrates how to use a hex editor to find the flag.
