@@ -1,4 +1,4 @@
-#des ofb
+#des-ofb
 
 **Category:** Crypto
 **Points:** 2
