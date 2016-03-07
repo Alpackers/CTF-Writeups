@@ -44,7 +44,7 @@ def is_ascii(s):
 def ByteToHex( byteStr ):
     return ''.join( [ "%02X" % ord( x ) for x in byteStr ] ).strip()
 
-f = open('c.txt', 'r')
+f = open('ciphertext', 'r')
 ciphertext = f.read()
 f.close()
 i=0
