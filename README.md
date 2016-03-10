@@ -7,3 +7,4 @@ To date we have participated in the following events:
 * PlaidCTF 2015
 * PoliCTF 2015
 * CSAW CTF Qualification Round 2015
+* Boston Key Party 2016
