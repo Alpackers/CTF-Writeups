@@ -1,0 +1,111 @@
+body {
+  /* This challenge would not have been possible without the help of waifu2x */
+  background: url(/static/ganbatte-mayoi.png) no-repeat center center fixed;
+  background-size: cover;
+}
+h1,h2 {
+  color: #9AE1A8;
+  text-shadow: 1px 1px 0 #000,
+    -1px 1px 0 #000,
+    1px -1px 0 #000,
+    -1px -1px 0 #000,
+    0px 1px 0 #000,
+    0px -1px 0 #000,
+    -1px 0px 0 #000,
+    1px 0px 0 #000,
+    2px 2px 0 #000,
+    -2px 2px 0 #000,
+    2px -2px 0 #000,
+    -2px -2px 0 #000,
+    0px 2px 0 #000,
+    0px -2px 0 #000,
+    -2px 0px 0 #000,
+    2px 0px 0 #000,
+    1px 2px 0 #000,
+    -1px 2px 0 #000,
+    1px -2px 0 #000,
+    -1px -2px 0 #000,
+    2px 1px 0 #000,
+    -2px 1px 0 #000,
+    2px -1px 0 #000,
+    -2px -1px 0 #000;
+}
+@keyframes obnoxious_text1 {
+  from {
+     opacity: 1;
+     font-size: 600%;
+  }
+  to {
+    opacity: 0.5;
+    font-size: 550%;
+  }
+}
+
+h1 {
+  width: 100%;
+  font-size: 600%;
+  position: fixed;
+  top: 5%;
+  left: 5%;
+  margin: 0px;
+  animation: 0.7s cubic-bezier(0.25,0.1,0.25,1) 0s infinite alternate obnoxious_text1;
+}
+
+@keyframes obnoxious_text2 {
+  from {
+     opacity: 1;
+     font-size: 350%;
+  }
+  to {
+    opacity: 0.5;
+    font-size: 320%;
+  }
+}
+
+h2 {
+  text-align: right;
+  position: absolute;
+  right: 10%;
+  bottom: 10%;
+  margin: 0px;
+  font-size: 350%;
+  animation: 0.8s cubic-bezier(0.25,0.1,0.25,1) 0.2s infinite alternate obnoxious_text2;
+}
+
+#prompt-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border: 1px solid #000;
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 25px;
+  padding: 20px;
+  box-sizing: border-box;
+  font-family: sans-serif;
+}
+
+#prompt {
+  text-align: center;
+  font-weight: bold;
+  font-size: 2em;
+}
+
+#prompt-input {
+  margin-top: 0.5em;
+  text-align: center;
+}
+
+#prompt-input input {
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 2em;
+  text-align: center;
+  opacity: 0.8;
+  border: 1px solid #333;
+  padding: 0.2em;
+}
+
+#prompt-input input[disabled] {
+  background-color: #ccc;
+}
