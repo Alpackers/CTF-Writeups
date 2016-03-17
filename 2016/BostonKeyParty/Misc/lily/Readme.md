@@ -11,7 +11,7 @@ In this challege we were provided with an [flac](./lily.flac) audio file.  After
 
 ![Spectrogram](./Images/lily.png)
 
-After hours and hours of messing with this file we finally turned too other writeups for some clues.  As it turns out the noise in the begining is really the header of an ELF file.  If we use ```sox``` to strip off the headers and look at the file type we will see that it is indeed just a binary.  Modify the permissions and executing the binary yields the flag.
+After hours and hours of messing with this file we finally turned too other writeups for some clues.  As it turns out the noise in the begining is really the header of an ELF file.  If we use ```sox``` to strip off the flac headers and look at the file type we will see that it is indeed just a binary.  Modify the permissions and executing the binary yields the flag.
 
 ```
 root@kali:~# sox lily.flac lily.raw
