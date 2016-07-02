@@ -55,7 +55,7 @@ narnia.labs.overthewire.org
 >}
 >```
 >
-> This looks pretty straight forward.  We accepting input via command line and copying that parameter into a character array of length 128.  Lets fuzz around that number a little bit and see what we get.
+> This looks pretty straight forward.  We are accepting input via command line and copying that parameter into a character array of length 128.  Lets fuzz around that number a little bit and see what we get.
 >
 >```
 ># ./narnia2 $(python -c 'print "A"*128')
