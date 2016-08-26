@@ -1,4 +1,4 @@
-#Good Morning
+#Dear Diary
 
 **Category:** Pwn
 **Points:** 60
