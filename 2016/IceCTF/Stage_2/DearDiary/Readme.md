@@ -4,9 +4,7 @@
 **Points:** 60
 **Description:**
 
-I don't have the official verbiage for the challenge.  Essentially you are provided the following binary and told it is being run at nc diary.vuln.icec.tf 6501.
-
-[deardiary](./deardiary)
+We all want to keep our secrets secure and what is more important than our precious diary entries? We made this highly secure diary service that is sure to keep all your boy crushes and edgy poems safe from your parents. nc diary.vuln.icec.tf 6501  [download file](./deardiary)
 
 ##Write-up
 Initially we run the binary and see what kind of functionality exists within it.
