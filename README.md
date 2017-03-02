@@ -8,3 +8,6 @@ To date we have participated in the following events:
 * PoliCTF 2015
 * CSAW CTF Qualification Round 2015
 * Boston Key Party 2016
+* Ice CTF 2016
+* Hack the Vote 2016
+* Boston Key Party 2017
